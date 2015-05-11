@@ -53,6 +53,30 @@ public class Match {
 
     @Override
     public String toString() {
-        return String.format("Match(%d, %s %s)",  start, stack.getName(), parent == null ? "ROOT" : parent.toString());
+//        return String.format("Match(%d, %s %s)",  start, stack.getName(), parent == null ? "ROOT" : parent.toString());
+        return String.format("Match(start: %d, name: %s, parent name: %s)",  start, stack.getName(), parent == null ? "ROOT" : parent.stack.getName());
+    }
+
+    public List<List<Match>> getTuples() {
+        List<List<Match>> result = new LinkedList<>();
+        List<Match> li = new LinkedList<Match>();
+        li.add(this);
+        result.add(li);
+
+        for(List<Match> childList : children.values()) {
+            List<List<Match>> temp = new LinkedList<>();
+            for(Match child : childList) {
+                List<List<Match>> listOfChild = child.getTuples();
+                for (List<Match> loc : listOfChild) {
+                    for(List<Match> rl : result) {
+                        loc.addAll(rl);
+                        temp.add(loc);
+                    }
+                }
+            }
+            result.removeAll(result);
+            result.addAll(temp);
+        }
+        return result;
     }
 }

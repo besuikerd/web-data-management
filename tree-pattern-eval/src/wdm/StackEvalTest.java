@@ -10,6 +10,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Stack;
 
 public class StackEvalTest extends DefaultHandler {
@@ -30,6 +31,14 @@ public class StackEvalTest extends DefaultHandler {
             StackEvalTest eval = new StackEvalTest(root);
             parser.parse(args[0], eval);
             System.out.println(eval.tempStack);
+
+            System.out.println("The stacks!");
+            for(Match m: eval.tempStack) {
+                for(List<Match> tuple: m.getTuples()) {
+                    System.out.println(tuple);
+                }
+                System.out.println();
+            }
         }
     }
 

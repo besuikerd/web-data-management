@@ -1,62 +1,45 @@
 <people>
     <person>
-        <email>
-            m@home
-        </email>
+        <email>m@home</email>
         <name>
-            <first>
-                Mary
-            </first>
-            <last>
-                Jones
-            </last>
-        </name>
-    </person>
-    <person>
-        <email>
-            a@home
-        </email>
-        <name>
-            <first>
-                Bob
-            </first>
-            <!--
-            <last>
-                Lang
-            </last>
-            -->
+            <first>Mary</first>
+            <last>Jones</last>
         </name>
     </person>
 
+    <!-- no last name -->
     <person>
-        <!--
-        <email>
-            a@home
-        </email>
-        <email>
-            a@work
-        </email>
-        -->
+        <email>a@home</email>
         <name>
-            <first>
-                Al
-            </first>
-            <last>
-                Hart
-            </last>
+            <first>Bob</first>
         </name>
     </person>
-    <not_a_person>
-        <email>
-            a@home
-        </email>
+
+    <!-- no emails -->
+    <person>
         <name>
-            <first>
-                Al
-            </first>
-            <last>
-                Hart
-            </last>
+            <first>Al</first>
+            <last>Hart</last>
+        </name>
+    </person>
+
+    <!-- two emails and two last names -->
+    <person>
+        <email>a@home</email>
+        <email>a@work</email>
+        <name>
+            <first>Al</first>
+            <last>Hart</last>
+            <last>Burn</last>
+        </name>
+    </person>
+
+    <!-- not a person -->
+    <not_a_person>
+        <email>a@home</email>
+        <name>
+            <first>Al</first>
+            <last>Hart</last>
         </name>
     </not_a_person>
 </people>
