@@ -9,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Stack;
 
 public class StackEvalTest extends DefaultHandler {
@@ -43,12 +44,20 @@ public class StackEvalTest extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         for (TPEStack s : rootStack.getDescendantStacks()) {
-            if (localName == s.getName() && s.getParent().top().getState() == MatchState.OPEN) {
-                Match m = new Match(currentPre, s.getParent().top(), s);
-                s.push(m);
-                preOfOpenNodes.push(currentPre);
+            if (qName.equals(s.getName())){
+                if(s.getParent() == null){
+
+                    System.out.println("pusing root " + s.getName());
+
+                    Match m = new Match(currentPre, null, s);
+                    s.push(m);
+                } else if(s.getParent().top().getState() == MatchState.OPEN){
+                    Match m = new Match(currentPre, s.getParent().top(), s);
+                    s.push(m);
+                    System.out.println("pushing " + s.getName());
+                }
             }
-            currentPre++;
+
         }
         for (int i = 0; i < attributes.getLength(); i++) {
 
@@ -58,16 +67,17 @@ public class StackEvalTest extends DefaultHandler {
                     s.push(ma);
                 }
             }
-            currentPre++;
         }
+        preOfOpenNodes.push(currentPre++);
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
             int preOfLastOpen = preOfOpenNodes.pop();
             for(TPEStack s : rootStack.getDescendantStacks()){
-                if (s.getName().equals(localName) && s.top().getState() == MatchState.OPEN && s.top().getStart() == preOfLastOpen){
+                if (qName.equals(s.getName()) && s.top().getState() == MatchState.OPEN && s.top().getStart() == preOfLastOpen){
                     Match m = s.pop();
+                    System.out.println("popping in " + s.getName());
                     for (TPEStack pChild : s.getChildren()){
                         m.getChildren().remove(pChild);
                     }

@@ -37,6 +37,17 @@ public class TPEStack {
         children.add(child);
     }
 
+    /*
+    public List<TPEStack> getDescendantStacks(){
+        List<TPEStack> result = new LinkedList<>();
+        result.addAll(children);
+        for(TPEStack child : children){
+            result.addAll(child.getDescendantStacks());
+        }
+        return result;
+    }
+    */
+
     public List<TPEStack> getDescendantStacks(){
         List<TPEStack> result = new LinkedList<>();
         result.add(this);
