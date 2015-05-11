@@ -54,7 +54,7 @@ public class StackEvalTest extends DefaultHandler {
                     System.out.println("pushing root " + s.getName());
                     Match m = new Match(currentPre, null, s);
                     s.push(m);
-                } else if(s.getParent().top().getState() == MatchState.OPEN){
+                } else if(s.getParent().top() != null && s.getParent().top().getState() == MatchState.OPEN){
                     Match m = new Match(currentPre, s.getParent().top(), s);
                     s.push(m);
                     System.out.println("pushing " + s.getName());
@@ -80,15 +80,13 @@ public class StackEvalTest extends DefaultHandler {
             }
 
             for(TPEStack s : rootStack.getDescendantStacks()){
-                if (qName.equals(s.getName()) && s.top().getState() == MatchState.OPEN && s.top().getStart() == preOfLastOpen){
+                if (qName.equals(s.getName()) && s.top() != null && s.top().getState() == MatchState.OPEN && s.top().getStart() == preOfLastOpen){
                     Match m = s.pop();
                     for (TPEStack pChild : s.getChildren()){
                         if(!m.getChildren().containsKey(pChild)){
-//                            pChild.getMatches().remove(m);
                             if(m.getParent() != null) {
-                                m.getParent().getChildren().remove(pChild);
+                                m.getParent().getChildren().remove(s);
                             }
-                            m.getChildren().remove(pChild);
                         }
                     }
                     if (m.getParent() == null && m.getChildren().size() >= s.getChildren().size()) {

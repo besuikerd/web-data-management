@@ -46,4 +46,17 @@
             </last>
         </name>
     </person>
+    <not_a_person>
+        <email>
+            a@home
+        </email>
+        <name>
+            <first>
+                Al
+            </first>
+            <last>
+                Hart
+            </last>
+        </name>
+    </not_a_person>
 </people>

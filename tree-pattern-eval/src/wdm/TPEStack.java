@@ -62,7 +62,11 @@ public class TPEStack {
     }
 
     public Match top(){
-        return matches.peek();
+        if(matches.isEmpty()) {
+            return null;
+        } else {
+            return matches.peek();
+        }
     }
 
     public void push(Match m){
