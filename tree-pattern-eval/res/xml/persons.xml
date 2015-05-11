@@ -23,14 +23,14 @@
         </name>
     </person>
 
-    <!-- two emails and two last names -->
+    <!-- two emails and two last names
+            <last>Burn</last>-->
     <person>
         <email>a@home</email>
         <email>a@work</email>
         <name>
             <first>Al</first>
             <last>Hart</last>
-            <last>Burn</last>
         </name>
     </person>
 

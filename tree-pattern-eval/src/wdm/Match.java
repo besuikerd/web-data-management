@@ -63,14 +63,14 @@ public class Match {
         li.add(this);
         result.add(li);
 
-        for(List<Match> childList : children.values()) {
+        for(List<Match> childList : children.values()) { //Forception >.<
             List<List<Match>> temp = new LinkedList<>();
             for(Match child : childList) {
-                List<List<Match>> listOfChild = child.getTuples();
-                for (List<Match> loc : listOfChild) {
-                    for(List<Match> rl : result) {
-                        loc.addAll(rl);
-                        temp.add(loc);
+                for(List<Match> tuple : child.getTuples()) {
+                    for(List<Match> resTuple : result) {
+                        List<Match> newTuple = new ArrayList<Match>(tuple);
+                        newTuple.addAll(resTuple);
+                        temp.add(newTuple);
                     }
                 }
             }

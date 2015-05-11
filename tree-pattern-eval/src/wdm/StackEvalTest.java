@@ -23,7 +23,7 @@ public class StackEvalTest extends DefaultHandler {
             TPEStack root = new TPEStack(null, "person");
             TPEStack email = new TPEStack(root, "email");
             TPEStack name = new TPEStack(root, "name");
-            TPEStack last = new TPEStack(name, "last");
+            TPEStack last = new TPEStack(root, "last");
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
