@@ -73,4 +73,8 @@ public class TPEStack {
     public String toString() {
         return String.format("%s(%s)", getName(), getChildren().toString());
     }
+
+    public Stack<Match> getMatches() {
+        return matches;
+    }
 }

@@ -12,7 +12,6 @@
             </last>
         </name>
     </person>
-
     <person>
         <email>
             a@home
@@ -21,19 +20,23 @@
             <first>
                 Bob
             </first>
+            <!--
             <last>
                 Lang
             </last>
+            -->
         </name>
     </person>
 
     <person>
+        <!--
         <email>
             a@home
         </email>
         <email>
             a@work
         </email>
+        -->
         <name>
             <first>
                 Al

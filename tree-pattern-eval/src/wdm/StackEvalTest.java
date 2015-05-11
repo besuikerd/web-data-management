@@ -26,7 +26,10 @@ public class StackEvalTest extends DefaultHandler {
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
-            parser.parse(args[0], new StackEvalTest(root));
+
+            StackEvalTest eval = new StackEvalTest(root);
+            parser.parse(args[0], eval);
+            System.out.println(eval.tempStack);
         }
     }
 
@@ -34,11 +37,13 @@ public class StackEvalTest extends DefaultHandler {
     TPEStack rootStack;
     int currentPre;
     Stack<Integer> preOfOpenNodes;
+    Stack<Match> tempStack;
 
     public StackEvalTest(TPEStack rootStack) {
         this.rootStack = rootStack;
         this.preOfOpenNodes = new Stack<>();
         this.currentPre = 0;
+        this.tempStack = new Stack<>();
     }
 
     @Override
@@ -46,9 +51,7 @@ public class StackEvalTest extends DefaultHandler {
         for (TPEStack s : rootStack.getDescendantStacks()) {
             if (qName.equals(s.getName())){
                 if(s.getParent() == null){
-
-                    System.out.println("pusing root " + s.getName());
-
+                    System.out.println("pushing root " + s.getName());
                     Match m = new Match(currentPre, null, s);
                     s.push(m);
                 } else if(s.getParent().top().getState() == MatchState.OPEN){
@@ -57,10 +60,8 @@ public class StackEvalTest extends DefaultHandler {
                     System.out.println("pushing " + s.getName());
                 }
             }
-
         }
         for (int i = 0; i < attributes.getLength(); i++) {
-
             for (TPEStack s : rootStack.getDescendantStacks()) {
                 if (attributes.getQName(i).equals(s.getName()) && s.getParent().top().getState() == MatchState.OPEN) {
                     Match ma = new Match(currentPre, s.getParent().top(), s);
@@ -74,13 +75,26 @@ public class StackEvalTest extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
             int preOfLastOpen = preOfOpenNodes.pop();
+            if(qName.equals(rootStack.getName())){
+                System.out.println("root closing");
+            }
+
             for(TPEStack s : rootStack.getDescendantStacks()){
                 if (qName.equals(s.getName()) && s.top().getState() == MatchState.OPEN && s.top().getStart() == preOfLastOpen){
                     Match m = s.pop();
-                    System.out.println("popping in " + s.getName());
                     for (TPEStack pChild : s.getChildren()){
-                        m.getChildren().remove(pChild);
+                        if(!m.getChildren().containsKey(pChild)){
+//                            pChild.getMatches().remove(m);
+                            if(m.getParent() != null) {
+                                m.getParent().getChildren().remove(pChild);
+                            }
+                            m.getChildren().remove(pChild);
+                        }
                     }
+                    if (m.getParent() == null && m.getChildren().size() >= s.getChildren().size()) {
+                        tempStack.push(m);
+                    }
+                    System.out.println("popping " + m.getChildren());
                     m.close();
                 }
             }
