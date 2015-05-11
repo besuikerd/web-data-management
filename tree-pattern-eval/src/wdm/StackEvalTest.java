@@ -15,29 +15,30 @@ public class StackEvalTest extends DefaultHandler {
 
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
-        args = new String[]{"xml/persons.xml"};
-
-
-
-
+        args = new String[]{"res/xml/persons.xml"};
 
         if(args.length > 0){
+            TPEStack root = new TPEStack(null, "person");
+            TPEStack email = new TPEStack(root, "email");
+            TPEStack name = new TPEStack(root, "name");
+            TPEStack last = new TPEStack(name, "last");
+
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
-            parser.parse(args[0], new StackEvalTest());
+            parser.parse(args[0], new StackEvalTest(root));
         }
-
-
-        TPEStack root = new TPEStack(null, "person");
-        TPEStack email = new TPEStack(root, "email");
-        TPEStack name = new TPEStack(root, "name");
-        TPEStack last = new TPEStack(name, "last");
     }
 
 
     TPEStack rootStack;
-    int currentPre = 0;
+    int currentPre;
     Stack<Integer> preOfOpenNodes;
+
+    public StackEvalTest(TPEStack rootStack) {
+        this.rootStack = rootStack;
+        this.preOfOpenNodes = new Stack<>();
+        this.currentPre = 0;
+    }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {

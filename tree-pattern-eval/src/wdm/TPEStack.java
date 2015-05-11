@@ -57,4 +57,9 @@ public class TPEStack {
     public void push(Match m){
         matches.push(m);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s(%s)", getName(), getChildren().toString());
+    }
 }
