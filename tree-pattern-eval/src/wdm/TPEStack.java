@@ -5,24 +5,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-public class TPEStack {
-    private String name;
+abstract public class TPEStack {
+//    private String name;
     private Stack<Match> matches;
     private TPEStack parent;
     private List<TPEStack> children;
+    protected Matcher matcher;
 
-    public TPEStack(TPEStack parent, String name){
+    public TPEStack(TPEStack parent, Matcher matcher){
         this.parent = parent;
-        this.name = name;
+        this.matcher = matcher;
         this.matches = new Stack<>();
         this.children = new ArrayList<>();
         if(parent != null){
             parent.addChild(this);
         }
-    }
-
-    public String getName() {
-        return name;
     }
 
     public List<TPEStack> getChildren(){
@@ -58,7 +55,11 @@ public class TPEStack {
     }
 
     public Match pop(){
-        return matches.pop();
+        if(matches.isEmpty()) {
+            return null;
+        } else {
+            return matches.pop();
+        }
     }
 
     public Match top(){
@@ -75,10 +76,21 @@ public class TPEStack {
 
     @Override
     public String toString() {
-        return String.format("%s(%s)", getName(), getChildren().toString());
+//        return String.format("%s(%s)", matcher.toString(), getChildren().toString());
+        return String.format("TPEStack(%s)", matcher.toString());
     }
 
     public Stack<Match> getMatches() {
         return matches;
     }
+
+    public boolean isMatch(String label) {
+        return matcher.isMatch(label);
+    }
+    public boolean hasOpenMatch(int pre) {
+        return this.top() != null && this.top().getState() == MatchState.OPEN && this.top().getStart() == pre;
+    }
+
+    abstract public boolean parentHasMatch();
+    abstract public void createMatch(int pre);
 }

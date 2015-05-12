@@ -11,6 +11,8 @@ public class Match {
     private TPEStack stack;
     private Map<TPEStack, List<Match>> children;
 
+    private String content = null;
+
     public Match(int start, Match parent, TPEStack stack){
         this.start = start;
         this.parent = parent;
@@ -54,7 +56,9 @@ public class Match {
     @Override
     public String toString() {
 //        return String.format("Match(%d, %s %s)",  start, stack.getName(), parent == null ? "ROOT" : parent.toString());
-        return String.format("Match(start: %d, name: %s, parent name: %s)",  start, stack.getName(), parent == null ? "ROOT" : parent.stack.getName());
+//        return String.format("Match(start: %d, name: %s, parent name: %s)",  start, stack.getName(), parent == null ? "ROOT" : parent.stack.getName());
+
+        return String.format("Match(start: %d, TPEStack: %s)",  start, stack.toString());
     }
 
     public List<List<Match>> getTuples() {
@@ -78,5 +82,13 @@ public class Match {
             result.addAll(temp);
         }
         return result;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

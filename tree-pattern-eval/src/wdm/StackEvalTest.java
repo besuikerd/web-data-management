@@ -20,10 +20,10 @@ public class StackEvalTest extends DefaultHandler {
         args = new String[]{"res/xml/persons.xml"};
 
         if(args.length > 0){
-            TPEStack root = new TPEStack(null, "person");
-            TPEStack email = new TPEStack(root, "email");
-            TPEStack name = new TPEStack(root, "name");
-            TPEStack last = new TPEStack(root, "last");
+            TPEStack root = new TPEStackRoot(new MatcherString("person"));
+            TPEStack email = new TPEStackBranch(root, new MatcherString("email"));
+            TPEStack name = new TPEStackBranch(root, new MatcherString("name"));
+            TPEStack last = new TPEStackBranch(name, new MatcherString("last"));
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
@@ -32,7 +32,7 @@ public class StackEvalTest extends DefaultHandler {
             parser.parse(args[0], eval);
             System.out.println(eval.tempStack);
 
-            System.out.println("The stacks!");
+            System.out.println("\nThe tuples:");
             for(Match m: eval.tempStack) {
                 for(List<Match> tuple: m.getTuples()) {
                     System.out.println(tuple);
@@ -57,22 +57,17 @@ public class StackEvalTest extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+
+
         for (TPEStack s : rootStack.getDescendantStacks()) {
-            if (qName.equals(s.getName())){
-                if(s.getParent() == null){
-                    System.out.println("pushing root " + s.getName());
-                    Match m = new Match(currentPre, null, s);
-                    s.push(m);
-                } else if(s.getParent().top() != null && s.getParent().top().getState() == MatchState.OPEN){
-                    Match m = new Match(currentPre, s.getParent().top(), s);
-                    s.push(m);
-                    System.out.println("pushing " + s.getName());
-                }
+            if (s.isMatch(qName) && s.parentHasMatch()) {
+                s.createMatch(currentPre);
             }
         }
         for (int i = 0; i < attributes.getLength(); i++) {
             for (TPEStack s : rootStack.getDescendantStacks()) {
-                if (attributes.getQName(i).equals(s.getName()) && s.getParent().top().getState() == MatchState.OPEN) {
+//                if (attributes.getQName(i).equals(s.getName()) && s.getParent().top().getState() == MatchState.OPEN) {
+                if (s.isMatch(attributes.getQName(i)) && s.parentHasMatch()) {
                     Match ma = new Match(currentPre, s.getParent().top(), s);
                     s.push(ma);
                 }
@@ -83,27 +78,35 @@ public class StackEvalTest extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-            int preOfLastOpen = preOfOpenNodes.pop();
-            if(qName.equals(rootStack.getName())){
-                System.out.println("root closing");
-            }
+        int preOfLastOpen = preOfOpenNodes.pop();
+        if(rootStack.isMatch(qName)){
+            System.out.println("root closing");
+        }
 
-            for(TPEStack s : rootStack.getDescendantStacks()){
-                if (qName.equals(s.getName()) && s.top() != null && s.top().getState() == MatchState.OPEN && s.top().getStart() == preOfLastOpen){
-                    Match m = s.pop();
-                    for (TPEStack pChild : s.getChildren()){
-                        if(!m.getChildren().containsKey(pChild)){
-                            if(m.getParent() != null) {
-                                m.getParent().getChildren().remove(s);
-                            }
+        for(TPEStack s : rootStack.getDescendantStacks()){
+            if (s.isMatch(qName) && s.hasOpenMatch(preOfLastOpen)){
+                Match m = s.pop();
+                for (TPEStack pChild : s.getChildren()){
+                    if(!m.getChildren().containsKey(pChild)){
+                        if(m.getParent() != null) {
+                            m.getParent().getChildren().remove(s);
                         }
                     }
-                    if (m.getParent() == null && m.getChildren().size() >= s.getChildren().size()) {
-                        tempStack.push(m);
-                    }
-                    System.out.println("popping " + m.getChildren());
-                    m.close();
                 }
+                if (m.getParent() == null && m.getChildren().size() >= s.getChildren().size()) {
+                    tempStack.push(m);
+                }
+                m.close();
             }
+        }
+    }
+
+    @Override
+    public void characters(char ch[], int start, int length) throws SAXException {
+        char current[] = new char[length];
+        System.arraycopy(ch, start, current, 0, length);
+//        System.out.println(current);
+//        System.out.println(start);
+//        System.out.println(length);
     }
 }
