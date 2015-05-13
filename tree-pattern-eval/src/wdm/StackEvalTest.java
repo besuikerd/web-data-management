@@ -21,11 +21,11 @@ public class StackEvalTest extends DefaultHandler {
 
         if(args.length > 0){
 //            TPEStack root = new TPEStackRoot(new MatcherString("email"));
-            TPEStack root = new TPEStackRoot(new MatcherAny());
-            TPEStack email = new TPEStackBranch(root, new MatcherString("email"));
-            TPEStack att1 = new TPEStackAttribute(email, new MatcherString("attr1"));
-            TPEStack name = new TPEStackBranch(root, new MatcherString("name"));
-            TPEStack last = new TPEStackBranch(name, new MatcherString("last"));
+            TPEStack root = new TPEStackRoot(new MatcherAny(), false);
+            TPEStack email = new TPEStackBranch(root, new MatcherString("email"), true);
+            TPEStack att1 = new TPEStackAttribute(email, new MatcherString("attr1"), false);
+            TPEStack name = new TPEStackBranch(root, new MatcherString("name"), false);
+            TPEStack last = new TPEStackBranch(name, new MatcherString("last"), true);
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
@@ -35,6 +35,10 @@ public class StackEvalTest extends DefaultHandler {
             System.out.println(eval.tempStack);
 
             System.out.println("\nThe tuples:");
+
+
+
+
             for(Match m: eval.tempStack) {
                 for(List<Match> tuple: m.getTuples()) {
                     System.out.println(tuple);

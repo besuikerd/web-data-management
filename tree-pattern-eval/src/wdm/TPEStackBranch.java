@@ -5,8 +5,8 @@ package wdm;
  */
 public class TPEStackBranch extends TPEStack {
 
-    public TPEStackBranch(TPEStack parent, Matcher matcher){
-        super(parent, matcher);
+    public TPEStackBranch(TPEStack parent, Matcher matcher, boolean selected){
+        super(parent, matcher, selected);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package wdm;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Match {
     public static final int STATE_X = 0;
@@ -61,7 +62,7 @@ public class Match {
         return String.format("Match(start: %d, TPEStack: %s)",  start, stack.toString());
     }
 
-    public List<List<Match>> getTuples() {
+    public List<List<Match>> getAllTuples() {
         List<List<Match>> result = new LinkedList<>();
         List<Match> li = new LinkedList<Match>();
         li.add(this);
@@ -70,7 +71,7 @@ public class Match {
         for(List<Match> childList : children.values()) { //Forception >.<
             List<List<Match>> temp = new LinkedList<>();
             for(Match child : childList) {
-                for(List<Match> tuple : child.getTuples()) {
+                for(List<Match> tuple : child.getAllTuples()) {
                     for(List<Match> resTuple : result) {
                         List<Match> newTuple = new ArrayList<Match>(tuple);
                         newTuple.addAll(resTuple);
@@ -82,6 +83,10 @@ public class Match {
             result.addAll(temp);
         }
         return result;
+    }
+
+    public List<List<Match>> getTuples() {
+        return getAllTuples().stream().map(x -> x.stream().filter(y -> y.stack.isSelected()).collect(Collectors.toList())).collect(Collectors.toList());
     }
 
     public String getContent() {

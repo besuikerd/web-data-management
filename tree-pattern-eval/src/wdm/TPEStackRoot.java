@@ -5,8 +5,8 @@ package wdm;
  */
 public class TPEStackRoot extends TPEStack {
 
-    TPEStackRoot(Matcher matcher) {
-        super(null, matcher);
+    TPEStackRoot(Matcher matcher, boolean selected) {
+        super(null, matcher, selected);
     }
 
     @Override

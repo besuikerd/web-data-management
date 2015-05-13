@@ -10,8 +10,9 @@ abstract public class TPEStack {
     private TPEStack parent;
     private List<TPEStack> children;
     protected Matcher matcher;
+    protected boolean selected;
 
-    public TPEStack(TPEStack parent, Matcher matcher){
+    public TPEStack(TPEStack parent, Matcher matcher, boolean selected){
         this.parent = parent;
         this.matcher = matcher;
         this.matches = new Stack<>();
@@ -19,6 +20,7 @@ abstract public class TPEStack {
         if(parent != null){
             parent.addChild(this);
         }
+        this.selected = selected;
     }
 
     public List<TPEStack> getChildren(){
@@ -77,6 +79,10 @@ abstract public class TPEStack {
     }
     public boolean hasOpenMatch(int pre) {
         return this.top() != null && this.top().getState() == MatchState.OPEN && this.top().getStart() == pre;
+    }
+
+    public boolean isSelected() {
+        return selected;
     }
 
     abstract public boolean parentHasMatch();
