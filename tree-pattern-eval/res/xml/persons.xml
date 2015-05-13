@@ -1,7 +1,7 @@
 <people>
 
     <person>
-        <email>m@home</email>
+        <email attr1="blabla">m@home</email>
         <name>
             <first>Mary</first>
             <last>Jones</last>

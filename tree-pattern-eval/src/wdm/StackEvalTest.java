@@ -20,9 +20,10 @@ public class StackEvalTest extends DefaultHandler {
         args = new String[]{"res/xml/persons.xml"};
 
         if(args.length > 0){
-//            TPEStack root = new TPEStackRoot(new MatcherString("person"));
+//            TPEStack root = new TPEStackRoot(new MatcherString("email"));
             TPEStack root = new TPEStackRoot(new MatcherAny());
             TPEStack email = new TPEStackBranch(root, new MatcherString("email"));
+            TPEStack att1 = new TPEStackAttribute(email, new MatcherString("attr1"));
             TPEStack name = new TPEStackBranch(root, new MatcherString("name"));
             TPEStack last = new TPEStackBranch(name, new MatcherString("last"));
 
@@ -68,7 +69,7 @@ public class StackEvalTest extends DefaultHandler {
         for (int i = 0; i < attributes.getLength(); i++) {
             for (TPEStack s : rootStack.getDescendantStacks()) {
 //                if (attributes.getQName(i).equals(s.getName()) && s.getParent().top().getState() == MatchState.OPEN) {
-                if (s.isMatch(attributes.getQName(i)) && s.parentHasMatch()) {
+                if (s.isMatch(attributes.getQName(i)) && s.parentHasMatch() && (s instanceof TPEStackAttribute)) {
 //                    Match ma = new Match(currentPre, s.getParent().top(), s);
 //                    s.push(ma);
                     s.createMatch(currentPre);
@@ -81,14 +82,14 @@ public class StackEvalTest extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         int preOfLastOpen = preOfOpenNodes.pop();
-        if(rootStack.isMatch(qName)){
-            System.out.println("root closing");
-        }
+//        if(rootStack.isMatch(qName)){
+//            System.out.println("root closing");
+//        }
 
         for(TPEStack s : rootStack.getDescendantStacks()){
             if (s.isMatch(qName) && s.hasOpenMatch(preOfLastOpen)){
                 Match m = s.pop();
-                System.out.println("Popping match");
+                System.out.println("Popping match: " + m);
                 for (TPEStack pChild : s.getChildren()){
                     if(!m.getChildren().containsKey(pChild)){
                         if(m.getParent() != null) {
@@ -103,9 +104,6 @@ public class StackEvalTest extends DefaultHandler {
                         tempStack.push(m);
                     }
                 }
-//                if (m.getParent() == null && m.getChildren().size() >= s.getChildren().size()) {
-//                    tempStack.push(m);
-//                }
                 m.close();
             }
         }
