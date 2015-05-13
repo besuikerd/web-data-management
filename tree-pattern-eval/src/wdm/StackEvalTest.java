@@ -20,12 +20,12 @@ public class StackEvalTest extends DefaultHandler {
         args = new String[]{"res/xml/persons.xml"};
 
         if(args.length > 0){
-//            TPEStack root = new TPEStackRoot(new MatcherString("email"));
             TPEStack root = new TPEStackRoot(new MatcherAny(), false);
-            TPEStack email = new TPEStackBranch(root, new MatcherString("email"), true);
-            TPEStack att1 = new TPEStackAttribute(email, new MatcherString("attr1"), false);
-            TPEStack name = new TPEStackBranch(root, new MatcherString("name"), false);
-            TPEStack last = new TPEStackBranch(name, new MatcherString("last"), true);
+//            TPEStack root = new TPEStackRoot(new MatcherString("person"), false);
+//            TPEStack name = new TPEStackBranch(root, new MatcherString("name"), true);
+            TPEStack email = new TPEStackBranch(root, new MatcherOpt("email"), true);
+
+
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
@@ -95,12 +95,16 @@ public class StackEvalTest extends DefaultHandler {
                 Match m = s.pop();
                 System.out.println("Popping match: " + m);
                 for (TPEStack pChild : s.getChildren()){
-                    if(!m.getChildren().containsKey(pChild)){
+                    if(!m.getChildren().containsKey(pChild) && pChild.isOptional()){
                         if(m.getParent() != null) {
                             m.getParent().getChildren().remove(s);
                             System.out.println("Removing match from parent");
                             break;
                         }
+                        else if(pChild.isOptional()){
+                            s.createFailedMatch();
+                        }
+
                     }
                 }
                 if (m.getParent() == null) {

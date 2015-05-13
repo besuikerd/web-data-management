@@ -4,19 +4,23 @@ package wdm;
  * Created by maarten on 12-5-15.
  */
 public class MatcherOpt extends Matcher {
-    private String pattern;
+    private Matcher pattern;
 
-    MatcherOpt(String pattern) {
-        this.pattern = pattern;
+    MatcherOpt(Matcher matcher) {
+        this.pattern = matcher;
+    }
+
+    MatcherOpt(String matcher){
+        this(new MatcherString(matcher));
     }
 
     @Override
     public boolean isMatch(String name) {
-        return true;
+        return pattern.isMatch(name);
     }
 
     @Override
     public String toString() {
-        return "Opt[" + this.pattern + "]";
+        return "Opt[" + this.pattern.toString() + "]";
     }
 }

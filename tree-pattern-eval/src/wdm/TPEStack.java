@@ -85,6 +85,11 @@ abstract public class TPEStack {
         return selected;
     }
 
+    public boolean isOptional(){
+        return matcher instanceof  MatcherOpt;
+    }
+
     abstract public boolean parentHasMatch();
     abstract public void createMatch(int pre);
+    abstract public void createFailedMatch();
 }
