@@ -20,9 +20,11 @@ public class StackEvalTest extends DefaultHandler {
         args = new String[]{"res/xml/persons.xml"};
 
         if(args.length > 0){
-            TPEStack root = new TPEStackRoot(new MatcherAny(), false);
+            TPEStack root = new TPEStackRoot(new MatcherAny(), true);
 //            TPEStack root = new TPEStackRoot(new MatcherString("person"), false);
-//            TPEStack name = new TPEStackBranch(root, new MatcherString("name"), true);
+            TPEStack name = new TPEStackBranch(root, new MatcherString("name"), true);
+            TPEStack last = new TPEStackBranch(name, new MatcherString("last"), true);
+//            TPEStack email = new TPEStackBranch(root, new MatcherString("email"), true);
             TPEStack email = new TPEStackBranch(root, new MatcherOpt("email"), true);
 
 
@@ -92,19 +94,20 @@ public class StackEvalTest extends DefaultHandler {
 
         for(TPEStack s : rootStack.getDescendantStacks()){
             if (s.isMatch(qName) && s.hasOpenMatch(preOfLastOpen)){
-                Match m = s.pop();
+                Match m = s.top();
                 System.out.println("Popping match: " + m);
                 for (TPEStack pChild : s.getChildren()){
-                    if(!m.getChildren().containsKey(pChild) && pChild.isOptional()){
-                        if(m.getParent() != null) {
-                            m.getParent().getChildren().remove(s);
-                            System.out.println("Removing match from parent");
-                            break;
+                    if(!m.getChildren().containsKey(pChild)) {
+                        if(!pChild.isOptional()) {
+                            if (m.getParent() != null) {
+                                m.getParent().getChildren().remove(s);
+                                System.out.println("Removing match from parent");
+                            }
                         }
-                        else if(pChild.isOptional()){
-                            s.createFailedMatch();
+                        else {
+                            pChild.createFailedMatch();
+                            pChild.pop();
                         }
-
                     }
                 }
                 if (m.getParent() == null) {
@@ -113,6 +116,7 @@ public class StackEvalTest extends DefaultHandler {
                     }
                 }
                 m.close();
+                s.pop();
             }
         }
     }

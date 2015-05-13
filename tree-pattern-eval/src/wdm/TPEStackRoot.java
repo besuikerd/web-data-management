@@ -23,7 +23,7 @@ public class TPEStackRoot extends TPEStack {
 
     @Override
     public void createFailedMatch() {
-        System.out.println("pushing failed root match" + matcher.toString());
+        System.out.println("pushing failed root match " + matcher.toString());
         Match m = new FailedMatch(null, this);
         this.push(m);
     }

@@ -86,7 +86,7 @@ abstract public class TPEStack {
     }
 
     public boolean isOptional(){
-        return matcher instanceof  MatcherOpt;
+        return matcher instanceof MatcherOpt;
     }
 
     abstract public boolean parentHasMatch();
