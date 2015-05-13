@@ -1,4 +1,5 @@
 <people>
+
     <person>
         <email>m@home</email>
         <name>
@@ -42,4 +43,5 @@
             <last>Hart</last>
         </name>
     </not_a_person>
+
 </people>
