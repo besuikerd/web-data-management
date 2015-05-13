@@ -6,7 +6,7 @@ package wdm;
 public class MatcherAny extends Matcher {
 
     @Override
-    public boolean isMatch(String name) {
+    public boolean preMatch(String name) {
         return true;
     }
 

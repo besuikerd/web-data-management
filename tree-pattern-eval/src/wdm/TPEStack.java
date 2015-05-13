@@ -75,7 +75,7 @@ abstract public class TPEStack {
     }
 
     public boolean isMatch(String label) {
-        return matcher.isMatch(label);
+        return matcher.preMatch(label);
     }
     public boolean hasOpenMatch(int pre) {
         return this.top() != null && this.top().getState() == MatchState.OPEN && this.top().getStart() == pre;
@@ -89,7 +89,11 @@ abstract public class TPEStack {
         return matcher instanceof MatcherOpt;
     }
 
+    public Match createMatch(int pre, String label){
+        Match m = matcher.createMatch(this, this.parent.top(), pre, label);
+        push(m);
+        return m;
+    }
+
     abstract public boolean parentHasMatch();
-    abstract public void createMatch(int pre);
-    abstract public void createFailedMatch();
 }

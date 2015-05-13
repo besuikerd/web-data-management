@@ -15,16 +15,9 @@ public class TPEStackRoot extends TPEStack {
     }
 
     @Override
-    public void createMatch(int pre) {
-        System.out.println("pushing root " + matcher.toString());
-        Match m = new Match(pre, null, this);
-        this.push(m);
-    }
-
-    @Override
-    public void createFailedMatch() {
-        System.out.println("pushing failed root match " + matcher.toString());
-        Match m = new FailedMatch(null, this);
-        this.push(m);
+    public Match createMatch(int pre, String label) {
+        Match m = matcher.createMatch(this, null, pre, label);
+        push(m);
+        return m;
     }
 }

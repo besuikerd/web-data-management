@@ -10,7 +10,7 @@ public class MatcherString extends Matcher {
     }
 
     @Override
-    public boolean isMatch(String name) {
+    public boolean preMatch(String name) {
         return name.equals(pattern);
     }
 

@@ -1,8 +1,8 @@
 package wdm;
 
 public class FailedMatch extends Match{
-    public FailedMatch(Match parent, TPEStack stack) {
-        super(-1, parent, stack);
+    public FailedMatch(TPEStack stack, Match parent) {
+        super(-1, "", parent, stack);
         close();
     }
 
