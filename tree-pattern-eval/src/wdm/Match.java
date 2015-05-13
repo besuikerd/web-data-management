@@ -13,6 +13,7 @@ public class Match {
     private TPEStack stack;
     private Map<TPEStack, List<Match>> children;
     private String content = null;
+    private XMLEntity xml = null;
 
     public Match(int start, String label, Match parent, TPEStack stack){
         this.start = start;
@@ -146,5 +147,14 @@ public class Match {
             }
         }
         builder.append("</" + label + ">");
+    }
+
+
+    public XMLEntity getXml() {
+        return xml;
+    }
+
+    public void setXml(XMLEntity xml) {
+        this.xml = xml;
     }
 }

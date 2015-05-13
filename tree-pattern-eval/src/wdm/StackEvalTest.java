@@ -68,6 +68,12 @@ public class StackEvalTest extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        XMLNode currentNode = new XMLNode(currentPre, qName, attributes);
+        if(!preOfOpenNodes.isEmpty()) {
+            preOfOpenNodes.peek().addChild(currentNode);
+        }
+        preOfOpenNodes.push(currentNode);
+
         for (TPEStack s : rootStack.getDescendantStacks()) {
             if (s.isMatch(qName) && s.parentHasMatch()) {
                 s.createMatch(currentPre, qName);
@@ -84,21 +90,21 @@ public class StackEvalTest extends DefaultHandler {
                 }
             }
         }
-        preOfOpenNodes.push(new XMLNode(currentPre++));
+        currentPre++;
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         XMLNode preOfLastOpen = preOfOpenNodes.pop();
-//        if(rootStack.preMatch(qName)){
-//            System.out.println("root closing");
-//        }
 
         for(TPEStack s : rootStack.getDescendantStacks()){
             if (s.isMatch(qName) && s.hasOpenMatch(preOfLastOpen.getIndex())){
                 Match m = s.top();
                 m.setContent(preOfLastOpen.getText());
+                m.setXml(preOfLastOpen);
+
                 System.out.println("Popping match: " + m + " with text: " + preOfLastOpen.getText());
+                System.out.println("Popping match: " + m + " with xml: " + m.getXml());
 
                 for (TPEStack pChild : s.getChildren()){
                     if(!m.getChildren().containsKey(pChild)) {
@@ -112,12 +118,6 @@ public class StackEvalTest extends DefaultHandler {
                             pChild.pop();
                         }
                     }
-//                    else if(!pChild.matcher.postMatch(m.getLabel(), preOfLastOpen.getText())){
-//                        if (m.getParent() != null) {
-//                            m.getParent().getChildren().remove(s);
-//                            System.out.println("Predicate failed, Removing match from parent");
-//                        }
-//                    }
                 }
 
                 if(!s.matcher.postMatch(m.getLabel(), preOfLastOpen.getText())) {
