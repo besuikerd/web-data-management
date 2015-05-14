@@ -79,6 +79,15 @@ public class XMLNode implements XMLEntity {
         }
 
         builder.append(">\n");
+
+        String text = getText().trim();
+        if(!text.isEmpty()){
+            String textWs = ws + "  ";
+            for(String s : text.split("\r\n|\n")){
+                builder.append(textWs + s.trim() + "\n");
+            }
+        }
+
         for(XMLNode child : children){
             child.bufferedToXMLString(builder, level + 1);
         }

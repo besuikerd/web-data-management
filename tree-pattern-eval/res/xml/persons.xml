@@ -1,11 +1,13 @@
 <person>
     <name nameProp="bla">
         <first prop = "bla">Mary</first>
-        <last>Jones</last>
-    </name>
-    <name>
-        <something_else prop = "hoi">
-            Bla
-        </something_else>
+        <last>
+            Hallo?
+            Is it me you are looking for?
+
+            Is it me you are looking for?
+
+            Is it me you are looking for?
+        </last>
     </name>
 </person>

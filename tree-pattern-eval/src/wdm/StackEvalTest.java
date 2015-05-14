@@ -6,6 +6,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import wdm.match.Match;
 import wdm.matcher.MatcherOpt;
+import wdm.matcher.MatcherPredicate;
 import wdm.matcher.MatcherString;
 import wdm.util.Pair;
 import wdm.xml.XMLNode;
@@ -23,32 +24,21 @@ public class StackEvalTest extends DefaultHandler {
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
         args = new String[]{"res/xml/persons.xml"};
+        final String filePath = args[0];
 
         if(args.length > 0){
-//            TPEStack root = new TPEStackRoot(new MatcherAny(), true);
-            TPEStack root = new TPEStackRoot(new MatcherString("person"), false);
+            TPEStack root = new TPEStackRoot(new MatcherString("person"));
             TPEStack name = new TPEStackBranch(root, new MatcherString("name"), true);
-//            TPEStack last = new TPEStackBranch(name, new MatcherString("last"), true);
-//            TPEStack email = new TPEStackBranch(root, new MatcherString("email"), true);
-//            TPEStack email = new TPEStackBranch(root, new MatcherPredicate(new MatcherOpt("email"), (label, text) -> text.endsWith("@home")), true);
-//            TPEStack root = new TPEStackRoot(new MatcherPredicate(new MatcherOpt("person"), (label, text) -> text.endsWith("bla")), true);
-
-//            TPEStack sub = new TPEStackBranch(root, new MatcherString("sub"), true);
-//            TPEStack piet = new TPEStackAttribute(root, new MatcherString("name"), true);
-
+            TPEStack last = new TPEStackBranch(name, new MatcherPredicate("last", (label, text) -> !text.isEmpty()), true);
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
 
-            StackEvalTest eval = new StackEvalTest(root);
-            parser.parse(args[0], eval);
-            System.out.println(eval.tempStack);
+            List<Match> result = new StackEval(root).evaluate(handler -> parser.parse(filePath, handler));
 
             System.out.println("\nThe tuples:");
 
-
-            for(Match m: eval.tempStack) {
-
+            for(Match m: result) {
                 for(List<Match> tuple: m.getTuples()) {
                     System.out.println(tuple);
                     for(Match m2 : tuple){
@@ -56,105 +46,10 @@ public class StackEvalTest extends DefaultHandler {
                     }
                 }
                 System.out.println();
-
-
             }
         }
     }
 
-    TPEStack rootStack;
-    int currentPre;
-    Stack<XMLNode> preOfOpenNodes;
-    Stack<Match> tempStack;
-
-    public StackEvalTest(TPEStack rootStack) {
-        this.rootStack = rootStack;
-        this.preOfOpenNodes = new Stack<>();
-        this.currentPre = 0;
-        this.tempStack = new Stack<>();
-    }
-
-    @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        List<Pair<String, String>> attributePairs = new ArrayList<>(attributes.getLength());
-        for(int i = 0 ; i < attributes.getLength() ; i++){
-            attributePairs.add(Pair.create(attributes.getQName(i), attributes.getValue(i)));
-        }
-        XMLNode currentNode = new XMLNode(currentPre, qName, attributePairs);
-
-        if(!preOfOpenNodes.isEmpty()) {
-            preOfOpenNodes.peek().addChild(currentNode);
-        }
-        preOfOpenNodes.push(currentNode);
-
-        for (TPEStack s : rootStack.getDescendantStacks()) {
-            if (s.isMatch(qName) && s.parentHasMatch()) {
-                s.createMatch(currentPre, qName);
-            }
-        }
-        for (int i = 0; i < attributes.getLength(); i++) {
-            for (TPEStack s : rootStack.getDescendantStacks()) {
-//                if (attributes.getQName(i).equals(s.getName()) && s.getParent().top().getState() == MatchState.OPEN) {
-                if (s.isMatch(attributes.getQName(i)) && s.parentHasMatch() && (s instanceof TPEStackAttribute) && s.matcher.postMatch(attributes.getQName(i), attributes.getValue(i))) {
-//                    Match ma = new Match(currentPre, s.getParent().top(), s);
-//                    s.push(ma);
-                    Match m = s.createMatch(currentPre, qName);
-                    m.setContent(attributes.getValue(i));
-                }
-            }
-        }
-        currentPre++;
-    }
-
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        XMLNode preOfLastOpen = preOfOpenNodes.pop();
-
-        for(TPEStack s : rootStack.getDescendantStacks()){
-            if (s.isMatch(qName) && s.hasOpenMatch(preOfLastOpen.getIndex())){
-                Match m = s.top();
-                m.setContent(preOfLastOpen.getText());
-                m.setXml(preOfLastOpen);
-
-                System.out.println("Popping match: " + m + " with text: " + preOfLastOpen.getText());
-                System.out.println("Popping match: " + m + " with xml: \n" + m.getXml().toXMLString());
-                System.out.println();
-
-                for (TPEStack pChild : s.getChildren()){
-                    if(!m.getChildren().containsKey(pChild)) {
-                        if(!pChild.isOptional()) {
-                            if (m.getParent() != null) {
-                                m.getParent().removeChild(s, m.getStart());
-                                System.out.println("Removing match from parent");
-                            }
-                        } else {
-                            pChild.createMatch(MatcherOpt.MATCH_FAILED, "");
-                            pChild.pop();
-                        }
-                    }
-                }
-
-                if(!s.matcher.postMatch(m.getLabel(), preOfLastOpen.getText())) {
-                    if (s.getParent() != null) {
-                        m.getParent().removeChild(s, m.getStart());
-                        System.out.println("Predicate failed, Removing match from parent");
-                    }
-                } else if (m.getParent() == null && m.getChildren().size() >= s.getChildren().size()) {
-                    tempStack.push(m);
-                }
-
-                m.close();
-                s.pop();
-            }
 
 
-        }
-    }
-
-    @Override
-    public void characters(char ch[], int start, int length) throws SAXException {
-        preOfOpenNodes.peek().appendText(new String(ch, start, length).trim());
-//        System.out.println(start);
-//        System.out.println(length);
-    }
 }

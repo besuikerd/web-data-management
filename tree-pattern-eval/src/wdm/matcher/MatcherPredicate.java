@@ -13,6 +13,10 @@ public class MatcherPredicate extends Matcher{
         this(innerMatcher, (label, txt) -> txt.equals(text));
     }
 
+    public MatcherPredicate(String label, MatchPredicate predicate){
+        this(new MatcherString(label), predicate);
+    }
+
     public MatcherPredicate(String label, String text) {
         this(new MatcherString(label), text);
     }

@@ -12,6 +12,10 @@ public class TPEStackRoot extends TPEStack {
         super(null, matcher, selected);
     }
 
+    TPEStackRoot(Matcher matcher) {
+        this(matcher, false);
+    }
+
     @Override
     public boolean parentHasMatch() {
         return true;

@@ -12,6 +12,10 @@ public class TPEStackBranch extends TPEStack {
         super(parent, matcher, selected);
     }
 
+    public TPEStackBranch(TPEStack parent, Matcher matcher){
+        this(parent, matcher, false);
+    }
+
     @Override
     public boolean parentHasMatch() {
         return this.getParent().top() != null && this.getParent().top().getState() == MatchState.OPEN;
