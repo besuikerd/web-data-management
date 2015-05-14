@@ -1,11 +1,13 @@
 package test;
 
-import wdm.TPEStack;
-import wdm.TPEStackBranch;
-import wdm.TPEStackRoot;
+import wdm.tpe.TPEStack;
+import wdm.tpe.TPEStackBranch;
+import wdm.tpe.TPEStackRoot;
 import wdm.match.Match;
 import wdm.matcher.MatcherPredicate;
 import wdm.matcher.MatcherString;
+import wdm.tpe.builder.TPEBuilder;
+import wdm.util.ImmutableList;
 
 import java.util.List;
 
@@ -16,7 +18,21 @@ public class PredicateTest extends CTPTest{
 
     @Override
     public void runTests() {
-        testSelectEmailLastNameWithMinimumAge();
+
+        TPEBuilder builder = TPEBuilder.builder()
+        .in("person", person -> person
+            .select("email")
+            .in("name", name -> name
+                .selectWhere("last", (label, text) -> text.startsWith("H"))
+            )
+        );
+
+        List<Match> result =  match(builder.build(), "persons.xml");
+        System.out.println(prettifyResult(result));
+
+        System.out.println("number of rows: " + rowCount(result));
+
+//        testSelectEmailLastNameWithMinimumAge();
     }
 
 

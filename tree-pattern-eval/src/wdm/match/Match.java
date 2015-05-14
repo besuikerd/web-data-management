@@ -1,7 +1,7 @@
 package wdm.match;
 
-import wdm.TPEStack;
-import wdm.TPEStackAttribute;
+import wdm.tpe.TPEStack;
+import wdm.tpe.TPEStackAttribute;
 import wdm.xml.XMLEntity;
 
 import java.util.*;

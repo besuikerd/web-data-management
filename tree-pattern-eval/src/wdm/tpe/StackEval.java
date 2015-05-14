@@ -1,4 +1,4 @@
-package wdm;
+package wdm.tpe;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -79,7 +79,7 @@ public class StackEval extends DefaultHandler {
                     }
                 }
 
-                if(!s.matcher.postMatch(m.getLabel(), preOfLastOpen.getText())) {
+                if(!s.matcher.postMatch(m.getLabel(), preOfLastOpen.getText().trim())) {
                     if (s.getParent() != null) {
                         m.getParent().removeChild(s, m.getStart());
                     }

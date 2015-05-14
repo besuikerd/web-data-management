@@ -1,7 +1,7 @@
 package wdm.matcher;
 
 import wdm.match.Match;
-import wdm.TPEStack;
+import wdm.tpe.TPEStack;
 
 /**
  * Created by maarten on 12-5-15.

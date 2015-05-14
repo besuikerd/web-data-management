@@ -1,4 +1,4 @@
-package wdm;
+package wdm.tpe;
 
 import wdm.match.Match;
 import wdm.matcher.Matcher;

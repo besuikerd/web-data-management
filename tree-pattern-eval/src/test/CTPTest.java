@@ -1,9 +1,10 @@
 package test;
 
 import org.xml.sax.SAXException;
-import wdm.StackEval;
-import wdm.TPEStack;
+import wdm.tpe.StackEval;
+import wdm.tpe.TPEStack;
 import wdm.match.Match;
+import wdm.tpe.builder.TPEBuilder;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 public abstract class CTPTest {
     protected String resourcePath = "res/xml";
     private SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+
 
     public List<Match> match(TPEStack root, String filename){
         try{
