@@ -1,5 +1,8 @@
 package wdm;
 
+import wdm.match.Match;
+import wdm.matcher.Matcher;
+
 /**
  * Created by maarten on 12-5-15.
  */

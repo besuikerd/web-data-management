@@ -1,4 +1,8 @@
-package wdm;
+package wdm.matcher;
+
+import wdm.match.FailedMatch;
+import wdm.match.Match;
+import wdm.TPEStack;
 
 /**
  * Created by maarten on 12-5-15.

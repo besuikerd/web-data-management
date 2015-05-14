@@ -1,6 +1,7 @@
-package wdm;
+package wdm.matcher;
 
-import java.util.Map;
+import wdm.match.Match;
+import wdm.TPEStack;
 
 /**
  * Created by maarten on 12-5-15.

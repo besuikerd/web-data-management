@@ -1,4 +1,4 @@
-package wdm;
+package wdm.match;
 
 public enum MatchState {
     OPEN,

@@ -1,4 +1,6 @@
-package wdm;
+package wdm.match;
+
+import wdm.TPEStack;
 
 public class FailedMatch extends Match{
     public FailedMatch(TPEStack stack, Match parent) {

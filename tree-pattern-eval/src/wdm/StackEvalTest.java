@@ -4,11 +4,17 @@ package wdm;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import wdm.match.Match;
+import wdm.matcher.MatcherOpt;
+import wdm.matcher.MatcherString;
+import wdm.util.Pair;
+import wdm.xml.XMLNode;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -19,15 +25,15 @@ public class StackEvalTest extends DefaultHandler {
         args = new String[]{"res/xml/persons.xml"};
 
         if(args.length > 0){
-            TPEStack root = new TPEStackRoot(new MatcherString("person"), true);
-//            TPEStack root = new TPEStackRoot(new MatcherString("person"), false);
-//            TPEStack name = new TPEStackBranch(root, new MatcherString("name"), true);
+//            TPEStack root = new TPEStackRoot(new MatcherAny(), true);
+            TPEStack root = new TPEStackRoot(new MatcherString("person"), false);
+            TPEStack name = new TPEStackBranch(root, new MatcherString("name"), true);
 //            TPEStack last = new TPEStackBranch(name, new MatcherString("last"), true);
 //            TPEStack email = new TPEStackBranch(root, new MatcherString("email"), true);
 //            TPEStack email = new TPEStackBranch(root, new MatcherPredicate(new MatcherOpt("email"), (label, text) -> text.endsWith("@home")), true);
 //            TPEStack root = new TPEStackRoot(new MatcherPredicate(new MatcherOpt("person"), (label, text) -> text.endsWith("bla")), true);
 
-            TPEStack sub = new TPEStackBranch(root, new MatcherString("sub"), true);
+//            TPEStack sub = new TPEStackBranch(root, new MatcherString("sub"), true);
 //            TPEStack piet = new TPEStackAttribute(root, new MatcherString("name"), true);
 
 
@@ -45,14 +51,16 @@ public class StackEvalTest extends DefaultHandler {
 
                 for(List<Match> tuple: m.getTuples()) {
                     System.out.println(tuple);
+                    for(Match m2 : tuple){
+                        System.out.println(m2.getXml().toXMLString());
+                    }
                 }
                 System.out.println();
 
-                System.out.println(m.toXml());
+
             }
         }
     }
-
 
     TPEStack rootStack;
     int currentPre;
@@ -68,7 +76,12 @@ public class StackEvalTest extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        XMLNode currentNode = new XMLNode(currentPre, qName, attributes);
+        List<Pair<String, String>> attributePairs = new ArrayList<>(attributes.getLength());
+        for(int i = 0 ; i < attributes.getLength() ; i++){
+            attributePairs.add(Pair.create(attributes.getQName(i), attributes.getValue(i)));
+        }
+        XMLNode currentNode = new XMLNode(currentPre, qName, attributePairs);
+
         if(!preOfOpenNodes.isEmpty()) {
             preOfOpenNodes.peek().addChild(currentNode);
         }
@@ -104,7 +117,8 @@ public class StackEvalTest extends DefaultHandler {
                 m.setXml(preOfLastOpen);
 
                 System.out.println("Popping match: " + m + " with text: " + preOfLastOpen.getText());
-                System.out.println("Popping match: " + m + " with xml: " + m.getXml());
+                System.out.println("Popping match: " + m + " with xml: \n" + m.getXml().toXMLString());
+                System.out.println();
 
                 for (TPEStack pChild : s.getChildren()){
                     if(!m.getChildren().containsKey(pChild)) {

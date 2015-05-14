@@ -1,4 +1,4 @@
-package wdm;
+package wdm.matcher;
 
 @FunctionalInterface
 public interface MatchPredicate {

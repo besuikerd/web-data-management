@@ -1,4 +1,4 @@
-package wdm;
+package wdm.matcher;
 
 /**
  * Created by maarten on 12-5-15.

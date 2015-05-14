@@ -1,11 +1,11 @@
-package wdm;
+package wdm.matcher;
 
 /**
  * Created by maarten on 12-5-15.
  */
 public class MatcherString extends Matcher {
     private String pattern;
-    MatcherString(String pattern) {
+    public MatcherString(String pattern) {
         this.pattern = pattern;
     }
 

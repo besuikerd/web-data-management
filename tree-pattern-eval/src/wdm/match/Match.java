@@ -1,4 +1,8 @@
-package wdm;
+package wdm.match;
+
+import wdm.TPEStack;
+import wdm.TPEStackAttribute;
+import wdm.xml.XMLEntity;
 
 import java.util.*;
 import java.util.stream.Collectors;

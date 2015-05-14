@@ -1,5 +1,10 @@
 package wdm;
 
+import wdm.match.Match;
+import wdm.match.MatchState;
+import wdm.matcher.Matcher;
+import wdm.matcher.MatcherOpt;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;

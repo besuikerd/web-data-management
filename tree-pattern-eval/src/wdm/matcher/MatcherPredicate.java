@@ -1,4 +1,4 @@
-package wdm;
+package wdm.matcher;
 
 public class MatcherPredicate extends Matcher{
     private Matcher innerMatcher;

@@ -1,4 +1,4 @@
-package wdm;
+package wdm.xml;
 
 public class XMLAttribute implements XMLEntity {
     private int index;
@@ -23,5 +23,10 @@ public class XMLAttribute implements XMLEntity {
 
     public String getLabel() {
         return label;
+    }
+
+    @Override
+    public String toXMLString() {
+        return label + " = " + text;
     }
 }
