@@ -2,6 +2,7 @@ package wdm;
 
 import wdm.match.MatchState;
 import wdm.matcher.Matcher;
+import wdm.matcher.MatcherString;
 
 /**
  * Created by maarten on 12-5-15.
@@ -14,6 +15,10 @@ public class TPEStackBranch extends TPEStack {
 
     public TPEStackBranch(TPEStack parent, Matcher matcher){
         this(parent, matcher, false);
+    }
+
+    public TPEStackBranch(TPEStack parent, String label){
+        this(parent, new MatcherString(label));
     }
 
     @Override

@@ -2,19 +2,30 @@ package wdm;
 
 import wdm.match.Match;
 import wdm.matcher.Matcher;
+import wdm.matcher.MatcherAny;
+import wdm.matcher.MatcherString;
 
 /**
  * Created by maarten on 12-5-15.
  */
 public class TPEStackRoot extends TPEStack {
 
-    TPEStackRoot(Matcher matcher, boolean selected) {
+    public TPEStackRoot(Matcher matcher, boolean selected) {
         super(null, matcher, selected);
     }
 
-    TPEStackRoot(Matcher matcher) {
+    public TPEStackRoot(Matcher matcher) {
         this(matcher, false);
     }
+
+    public TPEStackRoot() {
+        this(new MatcherAny());
+    }
+
+    public TPEStackRoot(String label) {
+        this(new MatcherString(label));
+    }
+
 
     @Override
     public boolean parentHasMatch() {

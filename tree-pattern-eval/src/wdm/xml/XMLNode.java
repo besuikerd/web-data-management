@@ -65,6 +65,7 @@ public class XMLNode implements XMLEntity {
         char[] wsBuf = new char[level * 2];
         Arrays.fill(wsBuf, ' ');
         String ws = new String(wsBuf);
+        String sep = System.lineSeparator();
 
         builder.append(ws + "<" + label);
         if(!attributes.isEmpty()){
@@ -78,19 +79,19 @@ public class XMLNode implements XMLEntity {
             }
         }
 
-        builder.append(">\n");
+        builder.append(">" + sep);
 
         String text = getText().trim();
         if(!text.isEmpty()){
             String textWs = ws + "  ";
             for(String s : text.split("\r\n|\n")){
-                builder.append(textWs + s.trim() + "\n");
+                builder.append(textWs + s.trim() + sep);
             }
         }
 
         for(XMLNode child : children){
             child.bufferedToXMLString(builder, level + 1);
         }
-        builder.append(ws + "</" + label + ">\n");
+        builder.append(ws + "</" + label + ">" + sep);
     }
 }

@@ -101,4 +101,9 @@ abstract public class TPEStack {
     }
 
     abstract public boolean parentHasMatch();
+
+    public TPEStack select(){
+        this.selected = true;
+        return this;
+    }
 }
