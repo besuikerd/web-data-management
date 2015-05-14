@@ -40,7 +40,7 @@ public abstract class CTPTest {
                         builder.append((1) + "\n");
                         row.forEach(column -> {
                             builder.append("==== " + column.getLabel() + " ====="  + "\n");
-                            builder.append(column.getXml().toXMLString()  + "\n");
+                            builder.append(column.getXml() == null ? "null" : column.getXml().toXMLString()  + "\n");
                             builder.append("\n");
                         });
                     });

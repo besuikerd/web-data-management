@@ -24,6 +24,8 @@ public class PredicateTest extends CTPTest{
             .select("email")
             .in("name", name -> name
                 .selectWhere("last", (label, text) -> text.startsWith("H"))
+                .select("first")
+                .selectOptional("bla")
             )
         );
 

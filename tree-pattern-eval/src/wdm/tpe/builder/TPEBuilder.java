@@ -52,12 +52,24 @@ public class TPEBuilder {
         return child(false, matcher);
     }
 
+    public TPEBuilder select(Matcher matcher){
+        return child(true, matcher);
+    }
+
     public TPEBuilder select(String label){
-        return child(true, new MatcherString(label));
+        return select(new MatcherString(label));
     }
 
     public TPEBuilder selectWhere(String label, MatchPredicate predicate){
         return child(true, new MatcherPredicate(label, predicate));
+    }
+
+    public TPEBuilder selectOptional(Matcher matcher){
+        return child(true, new MatcherOpt(matcher));
+    }
+
+    public TPEBuilder selectOptional(String label){
+        return selectOptional(new MatcherString(label));
     }
 
     public TPEBuilder where(MatchPredicate predicate){

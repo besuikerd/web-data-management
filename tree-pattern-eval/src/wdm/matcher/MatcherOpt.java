@@ -13,7 +13,7 @@ public class MatcherOpt extends Matcher {
 
     private Matcher pattern;
 
-    MatcherOpt(Matcher matcher) {
+    public MatcherOpt(Matcher matcher) {
         this.pattern = matcher;
     }
 
