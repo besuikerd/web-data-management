@@ -32,12 +32,20 @@ public class TPEBuilder {
         return new TPEBuilder(matcher, children, scopes);
     }
 
+    public static TPEBuilder builder(Matcher rootMatcher){
+        return new TPEBuilder(rootMatcher, ImmutableList.<TPEBuilderEntry>empty(), ImmutableList.<TPEBuilder>empty());
+    }
+
     public static TPEBuilder builder(){
-        return new TPEBuilder(new MatcherAny(), ImmutableList.<TPEBuilderEntry>empty(), ImmutableList.<TPEBuilder>empty());
+        return builder(new MatcherAny());
+    }
+
+    public static TPEBuilder builder(String label){
+        return builder(new MatcherString(label));
     }
 
     public TPEBuilder in(Matcher matcher, TPEBuilderContext ctx){
-        return new TPEBuilder(matcher, children, scopes.cons(ctx.apply(builder())));
+        return new TPEBuilder(this.matcher, children, scopes.cons(ctx.apply(builder(matcher))));
     }
 
     public TPEBuilder in(String label, TPEBuilderContext ctx){
@@ -52,6 +60,26 @@ public class TPEBuilder {
         return child(false, matcher);
     }
 
+    public TPEBuilder child(String label){
+        return child(false, new MatcherString(label));
+    }
+
+    public TPEBuilder child(){
+        return child(new MatcherAny());
+    }
+
+    public TPEBuilder childWhere(boolean select, Matcher matcher, MatchPredicate predicate){
+        return child(select, new MatcherPredicate(matcher, predicate));
+    }
+
+    public TPEBuilder childWhere(boolean select, String label, MatchPredicate predicate){
+        return childWhere(select, new MatcherString(label), predicate);
+    }
+
+    public TPEBuilder childWhere(String label, MatchPredicate predicate){
+        return childWhere(false, label, predicate);
+    }
+
     public TPEBuilder select(Matcher matcher){
         return child(true, matcher);
     }
@@ -61,7 +89,11 @@ public class TPEBuilder {
     }
 
     public TPEBuilder selectWhere(String label, MatchPredicate predicate){
-        return child(true, new MatcherPredicate(label, predicate));
+        return childWhere(true, label, predicate);
+    }
+
+    public TPEBuilder select(){
+        return select(new MatcherAny());
     }
 
     public TPEBuilder selectOptional(Matcher matcher){
@@ -93,10 +125,11 @@ public class TPEBuilder {
     }
 
     private void buildScope(TPEStack parent){
-        children.forEach(child -> {
-            new TPEStackBranch(parent, child.matcher, child.selected);
-        });
         final TPEStack current = new TPEStackBranch(parent, matcher);
+        children.forEach(child -> {
+            new TPEStackBranch(current, child.matcher, child.selected);
+        });
+
         scopes.forEach(scope -> scope.buildScope(current));
     }
 

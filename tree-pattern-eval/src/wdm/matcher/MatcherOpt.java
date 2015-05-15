@@ -11,10 +11,10 @@ public class MatcherOpt extends Matcher {
 
     public static final int MATCH_FAILED = -1;
 
-    private Matcher pattern;
+    private Matcher innerMatcher;
 
     public MatcherOpt(Matcher matcher) {
-        this.pattern = matcher;
+        this.innerMatcher = matcher;
     }
 
     MatcherOpt(String matcher){
@@ -23,16 +23,20 @@ public class MatcherOpt extends Matcher {
 
     @Override
     public Match createMatch(TPEStack stack, Match parentMatch, int pre, String label) {
-        return pre == MATCH_FAILED ? new FailedMatch(stack, parentMatch) : super.createMatch(stack, parentMatch, pre, label);
+        return pre == MATCH_FAILED ? new FailedMatch(stack, label, parentMatch) : super.createMatch(stack, parentMatch, pre, label);
     }
 
     @Override
     public boolean preMatch(String name) {
-        return pattern.preMatch(name);
+        return innerMatcher.preMatch(name);
+    }
+
+    public Matcher getInnerMatcher() {
+        return innerMatcher;
     }
 
     @Override
     public String toString() {
-        return "Opt[" + this.pattern.toString() + "]";
+        return "Opt[" + this.innerMatcher.toString() + "]";
     }
 }

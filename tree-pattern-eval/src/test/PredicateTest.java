@@ -1,5 +1,6 @@
 package test;
 
+import wdm.matcher.MatcherAny;
 import wdm.tpe.TPEStack;
 import wdm.tpe.TPEStackBranch;
 import wdm.tpe.TPEStackRoot;
@@ -7,7 +8,6 @@ import wdm.match.Match;
 import wdm.matcher.MatcherPredicate;
 import wdm.matcher.MatcherString;
 import wdm.tpe.builder.TPEBuilder;
-import wdm.util.ImmutableList;
 
 import java.util.List;
 
@@ -16,27 +16,91 @@ public class PredicateTest extends CTPTest{
         new PredicateTest().runTests();
     }
 
-    @Override
-    public void runTests() {
-
-        TPEBuilder builder = TPEBuilder.builder()
+    /**
+     * for $p in //person[email][name/last startsWith("H")][first]
+     *  return ($p/email, $p/name/last)
+     */
+    TPEBuilder peopleWithLastNamePredicate = TPEBuilder.builder()
         .in("person", person -> person
             .select("email")
             .in("name", name -> name
                 .selectWhere("last", (label, text) -> text.startsWith("H"))
-                .select("first")
-                .selectOptional("bla")
+                .child("first")
             )
         );
 
-        List<Match> result =  match(builder.build(), "persons.xml");
-        System.out.println(prettifyResult(result));
+    /**
+     * for $p in //person[email]
+     *                   [name/last]
+     * return ($p//email, $p/name/last)
+     */
+    TPEBuilder q1 = TPEBuilder.builder("person")
+            .select("email")
+        .in("name", name -> name
+            .select("last")
+        );
 
-        System.out.println("number of rows: " + rowCount(result));
+    /**
+     * for $p in //person[name/last]
+     * return ($p//email, $p/name/last)
+     */
+    TPEBuilder q2 = TPEBuilder.builder("person")
+        .selectOptional("email")
+        .in("name", name -> name
+            .select("last")
+        );
 
-//        testSelectEmailLastNameWithMinimumAge();
+    /**
+     * for $p in //person[email]
+     *  return $p//name/*
+     */
+    TPEBuilder q3 = TPEBuilder.builder("person")
+        .child("email")
+        .in("name", TPEBuilder::select);
+
+    /**
+     * for $p in //person[//first]
+     *                   [//last]
+     * where $p/email=’m@home’
+     * return ($p//first, $p//last)
+     */
+    TPEBuilder q4 = TPEBuilder.builder("person")
+        .childWhere("email", (label, text) -> text.equals("m@home"))
+        .select("first")
+        .select("last");
+
+    /**
+     * for $p in //person
+     * where $p/email=’m@home’
+     * return <res>{$p/&#42;/last}</res>
+     *
+     */
+    TPEBuilder q5=TPEBuilder.builder("person")
+    .childWhere("email", (label, text) -> text.equals("m@home"))
+    .in(new MatcherAny(), any -> any
+                    .select("last")
+    );
+
+    @Override
+    public void runTests() {
+        testBookExamples();
+        testSelectEmailLastNameWithMinimumAge();
+        testPeopleWithLastNamePredicate();
     }
 
+    public void testBookExamples(){
+        String bookFile = "book_persons.xml";
+        assertNMatches("q1", q1.build(), bookFile, 3);
+        assertNMatches("q2", q2.build(), bookFile, 4);
+        assertNMatches("q3", q3.build(), bookFile, 6);
+        assertNMatches("q4", q4.build(), bookFile, 1);
+        assertNMatches("q5", q5.build(), bookFile, 1);
+    }
+
+    public void testPeopleWithLastNamePredicate(){
+        String file = "persons.xml";
+        assertNMatches("PeopleWithLastNamePredicate", peopleWithLastNamePredicate.build(), file, 14);
+    }
 
     /**
      * tests if predicate is correctly tested. increments the age predicate by 10 between  10 and 80 and counts if the

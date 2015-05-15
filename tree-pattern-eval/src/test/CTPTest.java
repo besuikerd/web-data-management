@@ -50,6 +50,14 @@ public abstract class CTPTest {
         return builder.toString();
     }
 
+    protected void assertNMatches(String queryName, TPEStack root, String file, int n){
+        List<Match> result = match(root, file);
+        int rowCount = rowCount(result);
+        if(rowCount != n){
+            fail(String.format("[%s] expected %d results, got: %d", queryName, n, rowCount));
+        }
+    }
+
     protected void assertTrue(boolean condition){
         if(!condition){
             fail("true != " + condition);

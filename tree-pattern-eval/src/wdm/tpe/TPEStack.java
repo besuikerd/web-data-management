@@ -106,4 +106,8 @@ abstract public class TPEStack {
         this.selected = true;
         return this;
     }
+
+    public Matcher getMatcher() {
+        return matcher;
+    }
 }

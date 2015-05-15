@@ -73,7 +73,7 @@ public class StackEval extends DefaultHandler {
                                 m.getParent().removeChild(s, m.getStart());
                             }
                         } else {
-                            pChild.createMatch(MatcherOpt.MATCH_FAILED, "");
+                            pChild.createMatch(MatcherOpt.MATCH_FAILED, ((MatcherOpt)pChild.getMatcher()).getInnerMatcher().toString());
                             pChild.pop();
                         }
                     }
