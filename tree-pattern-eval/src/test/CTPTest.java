@@ -35,16 +35,18 @@ public abstract class CTPTest {
             if(result.isEmpty()){
                 builder.append("empty result"  + "\n");
             } else{
-                result.forEach(match -> {
-                    match.getTuples().forEach(row -> {
-                        builder.append((1) + "\n");
+                int i = 0;
+                for(Match match : result) {
+                    for (List<Match> row : match.getTuples()) {
+                        builder.append("===== ROW " + (i++) + " =====\n");
                         row.forEach(column -> {
-                            builder.append("==== " + column.getLabel() + " ====="  + "\n");
-                            builder.append(column.getXml() == null ? "null" : column.getXml().toXMLString()  + "\n");
+                            builder.append("==== " + column.getLabel() + " =====" + "\n");
+                            builder.append(column.getXml() == null ? "null" : column.getXml().toXMLString() + "\n");
                             builder.append("\n");
                         });
-                    });
-                });
+                    }
+                }
+
             }
         }
         return builder.toString();

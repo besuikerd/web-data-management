@@ -86,6 +86,7 @@ public class PredicateTest extends CTPTest{
         testBookExamples();
         testSelectEmailLastNameWithMinimumAge();
         testPeopleWithLastNamePredicate();
+//        System.out.println(prettifyResult(match(q1.build(), "persons.xml")));
     }
 
     public void testBookExamples(){
@@ -112,10 +113,6 @@ public class PredicateTest extends CTPTest{
             List<Match> result = selectEmailLastNameWithMinimumAge(i);
             int rowCount = rowCount(result);
             assertLTE(rowCount, lastRowCount);
-            if(i == 0){
-                System.out.println(prettifyResult(result));
-                System.out.println("row count: " + rowCount);
-            }
             lastRowCount = rowCount;
         }
     }
