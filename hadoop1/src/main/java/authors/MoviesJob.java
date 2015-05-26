@@ -1,27 +1,18 @@
 package authors;
 
-/**
- * Example of a simple MapReduce job: it reads
- * file containing authors and publications, and
- * produce each author with her publication count.
- */
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import authors.Authors;
-
 /**
- * The follozing class implements the Job submission, based on
- * the Mapper (AuthorsMapper) and the Reducer (CountReducer)
+ * Created by nick on 26-5-15.
  */
-public class AuthorsJob {
-
+public class MoviesJob {
     public static void main(String[] args) throws Exception {
 
 	/*
@@ -29,6 +20,9 @@ public class AuthorsJob {
 	 * $HADOOP_HOME/conf directory must be in the CLASSPATH
 	 */
         Configuration conf = new Configuration();
+
+
+
 
 	/* We expect two arguments */
 
@@ -38,16 +32,18 @@ public class AuthorsJob {
         }
 
 	/* Allright, define and submit the job */
-        Job job = new Job(conf, "Authors count");
+        Job job = new Job(conf, "Movies");
+
+//        job.setInputFormatClass(TextInputFormat.class);
 
 	/* Define the Mapper and the Reducer */
-        job.setMapperClass(Authors.AuthorsMapper.class);
-        job.setCombinerClass(Authors.AuthorsCombiner.class);
-        job.setReducerClass(Authors.CountReducer.class);
+        job.setMapperClass(Movies.MoviesMapper.class);
+        //job.setCombinerClass(Authors.AuthorsCombiner.class);
+        job.setReducerClass(Movies.MoviesReducer.class);
 
 	/* Define the output type */
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputValueClass(Text.class);
 
 	/* Set the input and the output */
         FileInputFormat.addInputPath(job, new Path(args[0]));

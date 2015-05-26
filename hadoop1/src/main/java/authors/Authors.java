@@ -31,10 +31,30 @@ public class Authors {
                 throws IOException, InterruptedException {
 
 	  /* Open a Java scanner object to parse the line */
+
+            System.out.println("mapping: " + value.toString());
+
             Scanner line = new Scanner(value.toString());
             line.useDelimiter("\t");
             author.set(line.next());
             context.write(author, one);
+        }
+    }
+
+    public static class AuthorsCombiner extends Reducer<Text, IntWritable, Text, IntWritable>{
+        private IntWritable result = new IntWritable();
+
+        public void reduce(Text key, Iterable<IntWritable> values,
+                           Context context)
+                throws IOException, InterruptedException {
+
+	  /* Iterate on the list to compute the count */
+            int count = 0;
+            for (IntWritable val : values) {
+                count += val.get();
+            }
+            result.set(count);
+            context.write(key, result);
         }
     }
 
