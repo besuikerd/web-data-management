@@ -1,9 +1,10 @@
 package test;
 
 import org.xml.sax.SAXException;
-import wdm.StackEval;
-import wdm.TPEStack;
+import wdm.tpe.StackEval;
+import wdm.tpe.TPEStack;
 import wdm.match.Match;
+import wdm.tpe.builder.TPEBuilder;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 public abstract class CTPTest {
     protected String resourcePath = "res/xml";
     private SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+
 
     public List<Match> match(TPEStack root, String filename){
         try{
@@ -33,19 +35,29 @@ public abstract class CTPTest {
             if(result.isEmpty()){
                 builder.append("empty result"  + "\n");
             } else{
-                result.forEach(match -> {
-                    match.getTuples().forEach(row -> {
-                        builder.append((1) + "\n");
+                int i = 0;
+                for(Match match : result) {
+                    for (List<Match> row : match.getTuples()) {
+                        builder.append("===== ROW " + (i++) + " =====\n");
                         row.forEach(column -> {
-                            builder.append("==== " + column.getLabel() + " ====="  + "\n");
-                            builder.append(column.getXml().toXMLString()  + "\n");
+                            builder.append("==== " + column.getLabel() + " =====" + "\n");
+                            builder.append(column.getXml() == null ? "null" : column.getXml().toXMLString() + "\n");
                             builder.append("\n");
                         });
-                    });
-                });
+                    }
+                }
+
             }
         }
         return builder.toString();
+    }
+
+    protected void assertNMatches(String queryName, TPEStack root, String file, int n){
+        List<Match> result = match(root, file);
+        int rowCount = rowCount(result);
+        if(rowCount != n){
+            fail(String.format("[%s] expected %d results, got: %d", queryName, n, rowCount));
+        }
     }
 
     protected void assertTrue(boolean condition){

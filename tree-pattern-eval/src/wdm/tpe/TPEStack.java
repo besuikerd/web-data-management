@@ -1,4 +1,4 @@
-package wdm;
+package wdm.tpe;
 
 import wdm.match.Match;
 import wdm.match.MatchState;
@@ -105,5 +105,9 @@ abstract public class TPEStack {
     public TPEStack select(){
         this.selected = true;
         return this;
+    }
+
+    public Matcher getMatcher() {
+        return matcher;
     }
 }

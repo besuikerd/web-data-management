@@ -1,23 +1,17 @@
-package wdm;
+package wdm.tpe;
 
 
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import wdm.match.Match;
-import wdm.matcher.MatcherOpt;
 import wdm.matcher.MatcherPredicate;
 import wdm.matcher.MatcherString;
-import wdm.util.Pair;
-import wdm.xml.XMLNode;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class StackEvalTest extends DefaultHandler {
 

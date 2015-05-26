@@ -28,7 +28,13 @@ public class MatcherPredicate extends Matcher{
 
     @Override
     public boolean postMatch(String name, String text) {
-        return predicate.matches(name, text) && innerMatcher.postMatch(name, text);
+        try{
+            return predicate.matches(name, text) && innerMatcher.postMatch(name, text);
+        } catch(NumberFormatException e){
+            return false;
+        }
+
+
     }
 
     @Override
