@@ -1,11 +1,13 @@
 package authors;
 
+import authors.XmlInputFormat;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
@@ -20,6 +22,8 @@ public class MoviesJob {
 	 * $HADOOP_HOME/conf directory must be in the CLASSPATH
 	 */
         Configuration conf = new Configuration();
+        conf.set("xmlinput.start", "<movie>");
+        conf.set("xmlinput.end", "</movie>");
 
 
 
@@ -33,8 +37,7 @@ public class MoviesJob {
 
 	/* Allright, define and submit the job */
         Job job = new Job(conf, "Movies");
-
-//        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(XmlInputFormat.class);
 
 	/* Define the Mapper and the Reducer */
         job.setMapperClass(Movies.MoviesMapper.class);
