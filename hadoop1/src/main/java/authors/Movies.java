@@ -5,7 +5,12 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -63,9 +68,21 @@ public class Movies {
     public static class MoviesMapper extends Mapper<LongWritable, Text, Text, Text>{
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-            System.out.println(value.toString());
-            System.out.println("\n\n====================================================");
+            try {
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = dbFactory.newDocumentBuilder();
+                Document d = builder.parse(new ByteArrayInputStream(value.toString().getBytes()));
+                Text title = new Text(d.getElementsByTagName("title").item(0).getTextContent());
+                NodeList actors = d.getElementsByTagName("actor");
+                for(int i = 0 ; i < actors.getLength() ; i++)
+                {
 
+                    System.out.println("writing: " + title + ": " + actors.item(i).getTextContent());
+                    context.write(title, new Text(actors.item(i).getTextContent()));
+                }
+            } catch(Exception e){
+
+            }
             context.write(value, value);
         }
     }
