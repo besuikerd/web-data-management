@@ -1,5 +1,6 @@
 package authors;
 
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
@@ -66,19 +67,29 @@ public class Movies {
 
 
     public static class MoviesMapper extends Mapper<LongWritable, Text, Text, Text>{
+
+        private Text movie = new Text();
+        private Text actor = new Text();
+
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             try {
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = dbFactory.newDocumentBuilder();
                 Document d = builder.parse(new ByteArrayInputStream(value.toString().getBytes()));
-                Text title = new Text(d.getElementsByTagName("title").item(0).getTextContent());
+                movie.set(d.getElementsByTagName("title").item(0).getTextContent());
+
                 NodeList actors = d.getElementsByTagName("actor");
                 for(int i = 0 ; i < actors.getLength() ; i++)
                 {
+                    String firstName = actors.item(i).getChildNodes().item(1).getTextContent().trim();
+                    String lastName = actors.item(i).getChildNodes().item(3).getTextContent().trim();
+                    String year = actors.item(i).getChildNodes().item(5).getTextContent().trim();
+                    String role = actors.item(i).getChildNodes().item(7).getTextContent().trim();
 
-                    System.out.println("writing: " + title + ": " + actors.item(i).getTextContent());
-                    context.write(title, new Text(actors.item(i).getTextContent()));
+                    actor.set(firstName + ' ' + lastName + '\t' + year + '\t' + role);
+                    System.out.println(movie + " " + actor);
+                    context.write(movie, actor);
                 }
             } catch(Exception e){
 
@@ -90,6 +101,12 @@ public class Movies {
     public static class MoviesReducer extends Reducer<Text, Text, Text, Text>{
         @Override
         protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+            System.out.println(key);
+            System.out.println(values.forEach(x -> System.out.println(x)));
+//            for(Text t : values) {
+//                System.out.println(t);
+//            }
+            System.out.println();
             context.write(key, values.iterator().next());
         }
     }
