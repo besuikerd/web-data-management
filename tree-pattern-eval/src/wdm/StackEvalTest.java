@@ -31,6 +31,11 @@ public class StackEvalTest extends DefaultHandler {
             TPEStack name = new TPEStackBranch(root, new MatcherString("name"), true);
             TPEStack last = new TPEStackBranch(name, new MatcherPredicate("last", (label, text) -> !text.isEmpty()), true);
 
+            TPEStack root = new TPEStackRoot(new MatcherString("person"));
+            TPEStack email = new TPEStackBranch(root, new MatcherString("email"), true);
+            TPEStack name = new TPEStackBranch(root, new MatcherString("name"));
+            TPEStack last = new TPEStackBranch(root, new MatcherString("last"), true);
+
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
 
