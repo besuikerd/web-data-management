@@ -2,3 +2,4 @@ playground/
 *.iml
 .idea/
 out/
+hadoop1/target/
