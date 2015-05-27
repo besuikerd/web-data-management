@@ -1,15 +1,11 @@
 package authors;
 
-import authors.XmlInputFormat;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.File;
@@ -17,7 +13,7 @@ import java.io.File;
 /**
  * Created by nick on 26-5-15.
  */
-public class MoviesJob {
+public class DirectorsJob {
     public static void main(String[] args) throws Exception {
 
 	/*
@@ -34,7 +30,7 @@ public class MoviesJob {
 	/* We expect two arguments */
 
         if (args.length != 2) {
-            System.err.println("Usage: AuthorsJob <in> <out>");
+            System.err.println("Usage: DirectorsJob <in> <out>");
             System.exit(2);
         }
 
@@ -42,12 +38,12 @@ public class MoviesJob {
         FileUtils.forceDelete(f);
 
 	/* Allright, define and submit the job */
-        Job job = new Job(conf, "Movies");
+        Job job = new Job(conf, "Directors");
         job.setInputFormatClass(XmlInputFormat.class);
 
 	/* Define the Mapper and the Reducer */
-        job.setMapperClass(Movies.MoviesMapper.class);
-        job.setReducerClass(Movies.MoviesReducer.class);
+        job.setMapperClass(Directors.DirectorsMapper.class);
+        job.setReducerClass(Directors.DirectorsReducer.class);
 
 	/* Define the output type */
         job.setOutputKeyClass(Text.class);

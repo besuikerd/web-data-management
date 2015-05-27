@@ -94,20 +94,15 @@ public class Movies {
             } catch(Exception e){
 
             }
-            context.write(value, value);
         }
     }
 
     public static class MoviesReducer extends Reducer<Text, Text, Text, Text>{
         @Override
         protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            System.out.println(key);
-            System.out.println(values.forEach(x -> System.out.println(x)));
-//            for(Text t : values) {
-//                System.out.println(t);
-//            }
-            System.out.println();
-            context.write(key, values.iterator().next());
+            for(Text t : values) {
+                context.write(key, t);
+            }
         }
     }
 }
