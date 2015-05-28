@@ -39,7 +39,10 @@ public class MoviesJob {
         }
 
         File f = new File(args[1]);
-        FileUtils.forceDelete(f);
+        if(f.exists()){
+            FileUtils.forceDelete(f);
+        }
+
 
 	/* Allright, define and submit the job */
         Job job = new Job(conf, "Movies");
