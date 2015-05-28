@@ -4,3 +4,4 @@ playground/
 out/
 hadoop1/target/
 hadoop1/datasets/out
+*.log
