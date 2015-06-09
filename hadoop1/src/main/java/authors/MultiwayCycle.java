@@ -6,7 +6,9 @@ import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -20,12 +22,12 @@ public class MultiwayCycle {
                 throws IOException, InterruptedException {
 
             System.out.println("Mapping1: " + value);
-            Scanner line = new Scanner(value.toString());
-            line.useDelimiter("\t");
+            String[] splits = value.toString().split("\t");
 
-            Text nKey = new Text(line.next() + "\t" + line.next() + "\t$" );
-
-            context.write(nKey, value);
+            for(int i=0; i<3; i++) {
+                Text nKey = new Text(splits[0] + "\t" + splits[1] + "\t$");
+                context.write(nKey, value);
+            }
         }
     }
     public static class MultiwayCycleMapper2 extends
@@ -35,12 +37,12 @@ public class MultiwayCycle {
                 throws IOException, InterruptedException {
 
             System.out.println("Mapping2: " + value);
-            Scanner line = new Scanner(value.toString());
-            line.useDelimiter("\t");
+            String[] splits = value.toString().split("\t");
 
-            Text nKey = new Text(line.next() + "\t$" + "\t" + line.next());
-
-            context.write(nKey, value);
+            for(int i=0; i<3; i++) {
+                Text nKey = new Text(splits[0] + "\t$" + "\t" + splits[1]);
+                context.write(nKey, value);
+            }
         }
     }
     public static class MultiwayCycleMapper3 extends
@@ -50,40 +52,50 @@ public class MultiwayCycle {
                 throws IOException, InterruptedException {
 
             System.out.println("Mapping2: " + value);
-            Scanner line = new Scanner(value.toString());
-            line.useDelimiter("\t");
+            String[] splits = value.toString().split("\t");
 
-            Text nKey = new Text("$" + "\t" + line.next() + "\t" + line.next());
-
-            context.write(nKey, value);
+            for(int i=0; i<3; i++) {
+                Text nKey = new Text("$" + "\t" + splits[0] + "\t" + splits[1]);
+                context.write(nKey, value);
+            }
         }
     }
 
-    public class MultiwayCyclePartitioner extends Partitioner<Text, Text> {
-        int balbl = 0;
-
+    public static class MultiwayCyclePartitioner extends Partitioner<Text, Text> {
+        private Map<String, Integer> repetitions = new HashMap<>();
         public int getPartition(Text key, Text value, int numReduceTasks) {
-//
-//            System.out.println(balbl++);
-//            String sKey = key.toString();
-//            String[] splits=sKey.split("\t");  //Split the key on tab
-//
-//            int m = (int)(Math.pow(numReduceTasks, 1.0 / 3.0));
-//            System.out.println("m: " + m);
-//            String A = splits[0];
-//            int aHash = Math.abs(A.hashCode() % m);
-//            String B = splits[1];
-//            int bHash = Math.abs(B.hashCode() % m);
-//            String C = splits[2];
-//            int cHash = Math.abs(C.hashCode() % m);
-//
-//            if(A.equals("$")) {
-//                for(aHash=0; aHash<m; aHash++) {
-//
-//                }
-//            }
-            return (int)(Math.random() * numReduceTasks); //Math.abs(value.toString().hashCode() % numReduceTasks);
-//            return 0;
+
+            Integer val;
+            if((val = repetitions.putIfAbsent(key.toString(), 0)) != null){
+                repetitions.put(key.toString(), ++val);
+            } else{
+                val = 0;
+            }
+            String[] splits = key.toString().split("\t");  //Split the key on tab
+
+            int m = (int)(Math.pow(numReduceTasks, 1.0 / 3.0));
+            String A = splits[0];
+            int aHash = Math.abs(A.hashCode() % m);
+            String B = splits[1];
+            int bHash = Math.abs(B.hashCode() % m);
+            String C = splits[2];
+            int cHash = Math.abs(C.hashCode() % m);
+
+            int result = 0;
+            if(A.equals("$")) {
+                result =  val * 3 * m + bHash * m + cHash;
+            }
+            else if(B.equals("$")) {
+                result = aHash * 3 * m + val * m + cHash;
+            }
+            else if(C.equals("$")) {
+                result = aHash * 3 * m + bHash * m + val;
+            }
+            else {
+                System.out.println("ERRORORORORORORORORORORRO");
+            }
+            System.out.println(key + " partition: " + result);
+            return result;
         }
     }
 
