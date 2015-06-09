@@ -10,6 +10,11 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.stream.Stream;
 
 /**
  * Created by maarten on 9-6-15.
@@ -65,5 +70,19 @@ public class MultiwayCycleJob {
 
         /* Do it! */
         job.waitForCompletion(true);
+
+        ArrayList<String> result = new ArrayList<>();
+
+        System.out.println();
+        for(int i=0; i<(int)Math.pow(b, 3); i++) {
+            try (Stream<String> lines = Files.lines(Paths.get(".", outputDir, String.format("part-r-%05d", i)), Charset.defaultCharset())) {
+                lines.forEachOrdered(l -> result.add(l));
+            }
+        }
+
+        System.out.println(String.format("Found %d triangles:", result.size()));
+        for(String l : result) {
+            System.out.println(l);
+        }
     }
 }
