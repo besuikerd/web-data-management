@@ -6,10 +6,7 @@ import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by maarten on 9-6-15.
@@ -25,8 +22,12 @@ public class MultiwayCycle {
             String[] splits = value.toString().split("\t");
 
             for(int i=0; i<3; i++) {
-                Text nKey = new Text(splits[0] + "\t" + splits[1] + "\t$");
-                context.write(nKey, value);
+                if(splits[0].hashCode() < splits[1].hashCode()) {
+                    context.write(new Text(""), new Text(splits[0] + "\t" + splits[1] + "\t$"));
+                }
+                else {
+                    context.write(new Text(""), new Text(splits[1] + "\t" + splits[0] + "\t$"));
+                }
             }
         }
     }
@@ -40,8 +41,12 @@ public class MultiwayCycle {
             String[] splits = value.toString().split("\t");
 
             for(int i=0; i<3; i++) {
-                Text nKey = new Text(splits[0] + "\t$" + "\t" + splits[1]);
-                context.write(nKey, value);
+                if(splits[0].hashCode() < splits[1].hashCode()) {
+                    context.write(new Text(""), new Text(splits[0] + "\t$" + "\t" + splits[1]));
+                }
+                else {
+                    context.write(new Text(""), new Text(splits[1] + "\t$" + "\t" + splits[0]));
+                }
             }
         }
     }
@@ -51,12 +56,16 @@ public class MultiwayCycle {
         public void map(Object key, Text value, Context context)
                 throws IOException, InterruptedException {
 
-            System.out.println("Mapping2: " + value);
+            System.out.println("Mapping3: " + value);
             String[] splits = value.toString().split("\t");
 
             for(int i=0; i<3; i++) {
-                Text nKey = new Text("$" + "\t" + splits[0] + "\t" + splits[1]);
-                context.write(nKey, value);
+                if(splits[0].hashCode() < splits[1].hashCode()) {
+                    context.write(new Text(""), new Text("$" + "\t" + splits[0] + "\t" + splits[1]));
+                }
+                else {
+                    context.write(new Text(""), new Text("$" + "\t" + splits[1] + "\t" + splits[0]));
+                }
             }
         }
     }
@@ -66,35 +75,35 @@ public class MultiwayCycle {
         public int getPartition(Text key, Text value, int numReduceTasks) {
 
             Integer val;
-            if((val = repetitions.putIfAbsent(key.toString(), 0)) != null){
-                repetitions.put(key.toString(), ++val);
+            if((val = repetitions.putIfAbsent(value.toString(), 0)) != null){
+                repetitions.put(value.toString(), ++val);
             } else{
                 val = 0;
             }
-            String[] splits = key.toString().split("\t");  //Split the key on tab
+            String[] splits = value.toString().split("\t");  //Split the key on tab
 
-            int m = (int)(Math.pow(numReduceTasks, 1.0 / 3.0));
+            int b = (int)(Math.pow(numReduceTasks, 1.0 / 3.0));
             String A = splits[0];
-            int aHash = Math.abs(A.hashCode() % m);
+            int aHash = Math.abs(A.hashCode() % b);
             String B = splits[1];
-            int bHash = Math.abs(B.hashCode() % m);
+            int bHash = Math.abs(B.hashCode() % b);
             String C = splits[2];
-            int cHash = Math.abs(C.hashCode() % m);
+            int cHash = Math.abs(C.hashCode() % b);
 
             int result = 0;
             if(A.equals("$")) {
-                result =  val * 3 * m + bHash * m + cHash;
+                result =  val * 3 * b + bHash * b + cHash;
             }
             else if(B.equals("$")) {
-                result = aHash * 3 * m + val * m + cHash;
+                result = aHash * 3 * b + val * b + cHash;
             }
             else if(C.equals("$")) {
-                result = aHash * 3 * m + bHash * m + val;
+                result = aHash * 3 * b + bHash * b + val;
             }
             else {
                 System.out.println("ERRORORORORORORORORORORRO");
             }
-            System.out.println(key + " partition: " + result);
+            System.out.println(value + " partition: " + result);
             return result;
         }
     }
@@ -104,11 +113,46 @@ public class MultiwayCycle {
     public static class MultiwayCycleReducer extends
             Reducer<Text, Text, Text, Text> {
 
+        private boolean equalsWild(String a, String b, String c){
+            return (a.equals(b) && c.equals("$")) || (b.equals(c) && a.equals("$")) || (c.equals(a) && b.equals("$"));
+        }
+
         public void reduce(Text key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
-            System.out.println("Reducing: " + key);
+            System.out.println("Reducing: " + key + " " + context.getTaskAttemptID().getTaskID().getId());
+
+            ArrayList<String[]> vs0 = new ArrayList<>();
+            ArrayList<String[]> vs1 = new ArrayList<>();
+            ArrayList<String[]> vs2 = new ArrayList<>();
+
             for(Text t : values) {
-                System.out.println(t);
+                String[] splits = t.toString().split("\t");
+                if(splits[0].equals("$"))
+                    vs0.add(splits);
+                else if(splits[1].equals("$"))
+                    vs1.add(splits);
+                else if(splits[2].equals("$"))
+                    vs2.add(splits);
+            }
+
+            //Checking permutations
+            ArrayList<String> result = new ArrayList<>();
+            for(int i=0; i<vs0.size(); i++) {
+                for(int j=0; j<vs1.size(); j++) {
+                    for(int k=0; k<vs2.size(); k++) {
+                        if(     equalsWild(vs0.get(i)[0], vs1.get(j)[0], vs2.get(k)[0]) &&
+                                equalsWild(vs0.get(i)[1], vs1.get(j)[1], vs2.get(k)[1]) &&
+                                equalsWild(vs0.get(i)[2], vs1.get(j)[2], vs2.get(k)[2])) {
+                            String[] cycle = vs0.get(i).clone();
+                            cycle[0] = vs1.get(j)[0];
+                            result.add(String.join("\t", cycle));
+                        }
+                    }
+                }
+            }
+            for(String s : result) {
+                System.out.println(s);
+                context.write(new Text(s), new Text(""));
             }
         }
     }
