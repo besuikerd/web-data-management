@@ -17,15 +17,8 @@ public class TriangleComputation extends BasicComputation<IntWritable, IntWritab
     public void compute(Vertex<IntWritable, IntWritable, NullWritable> vertex, Iterable<IntWritable> messages) throws IOException {
         switch((int) getSuperstep()) {
             case 0:
-                for (Edge<IntWritable, NullWritable> e : vertex.getEdges()) {
-                    if (vertex.getId().compareTo(e.getTargetVertexId()) < 0) { //we have a smaller index
-                        sendMessage(e.getTargetVertexId(), vertex.getId());
-                    }
-                }
-                break;
-            case 1:
                 int trianglesFound = 0;
-                for (IntWritable sourceId : messages) {
+                for (Edge<IntWritable, NullWritable> e : vertex.getEdges()) {
                     trianglesFound++;
                 }
                 log.debug("triangles found: " + trianglesFound);
