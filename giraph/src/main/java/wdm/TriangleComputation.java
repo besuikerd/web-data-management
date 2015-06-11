@@ -26,14 +26,12 @@ public class TriangleComputation extends BasicComputation<IntWritable, IntWritab
             case 1:
                 int trianglesFound = 0;
                 for (IntWritable sourceId : messages) {
-                    for (Edge<IntWritable, NullWritable> e : vertex.getEdges()) {
-                        trianglesFound++;
-                    }
+                    trianglesFound++;
                 }
                 log.debug("triangles found: " + trianglesFound);
                 vertex.setValue(new IntWritable(trianglesFound));
                 break;
-        }   
+        }
         vertex.voteToHalt();
     }
 
