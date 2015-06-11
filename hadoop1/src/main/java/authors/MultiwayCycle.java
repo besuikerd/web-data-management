@@ -18,10 +18,11 @@ public class MultiwayCycle {
         public void map(Object key, Text value, Context context)
                 throws IOException, InterruptedException {
 
+            int b = context.getConfiguration().getInt("b", 0);
             System.out.println("Mapping1: " + value);
             String[] splits = value.toString().split("\t");
 
-            for(int i=0; i<3; i++) {
+            for(int i=0; i<b; i++) {
                 if(splits[0].hashCode() < splits[1].hashCode()) {
                     context.write(new Text(""), new Text(splits[0] + "\t" + splits[1] + "\t$"));
                 }
@@ -37,10 +38,11 @@ public class MultiwayCycle {
         public void map(Object key, Text value, Context context)
                 throws IOException, InterruptedException {
 
+            int b = context.getConfiguration().getInt("b", 0);
             System.out.println("Mapping2: " + value);
             String[] splits = value.toString().split("\t");
 
-            for(int i=0; i<3; i++) {
+            for(int i=0; i<b; i++) {
                 if(splits[0].hashCode() < splits[1].hashCode()) {
                     context.write(new Text(""), new Text(splits[0] + "\t$" + "\t" + splits[1]));
                 }
@@ -56,10 +58,11 @@ public class MultiwayCycle {
         public void map(Object key, Text value, Context context)
                 throws IOException, InterruptedException {
 
+            int b = context.getConfiguration().getInt("b", 0);
             System.out.println("Mapping3: " + value);
             String[] splits = value.toString().split("\t");
 
-            for(int i=0; i<3; i++) {
+            for(int i=0; i<b; i++) {
                 if(splits[0].hashCode() < splits[1].hashCode()) {
                     context.write(new Text(""), new Text("$" + "\t" + splits[0] + "\t" + splits[1]));
                 }
@@ -70,6 +73,7 @@ public class MultiwayCycle {
         }
     }
 
+    //TODO Dimensions always equal to eachother, allowed?
     public static class MultiwayCyclePartitioner extends Partitioner<Text, Text> {
         private Map<String, Integer> repetitions = new HashMap<>();
         public int getPartition(Text key, Text value, int numReduceTasks) {
@@ -80,7 +84,7 @@ public class MultiwayCycle {
             } else{
                 val = 0;
             }
-            String[] splits = value.toString().split("\t");  //Split the key on tab
+            String[] splits = value.toString().split("\t");
 
             int b = (int)(Math.pow(numReduceTasks, 1.0 / 3.0));
             String A = splits[0];
@@ -92,13 +96,13 @@ public class MultiwayCycle {
 
             int result = 0;
             if(A.equals("$")) {
-                result =  val * 3 * b + bHash * b + cHash;
+                result =  val * b * b + bHash * b + cHash;
             }
             else if(B.equals("$")) {
-                result = aHash * 3 * b + val * b + cHash;
+                result = aHash * b * b + val * b + cHash;
             }
             else if(C.equals("$")) {
-                result = aHash * 3 * b + bHash * b + val;
+                result = aHash * b * b + bHash * b + val;
             }
             else {
                 System.out.println("ERRORORORORORORORORORORRO");
