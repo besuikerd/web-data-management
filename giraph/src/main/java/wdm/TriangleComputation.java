@@ -45,11 +45,16 @@ public class TriangleComputation extends BasicComputation<IntWritable, IntWritab
 //                vertex.setValue(new IntWritable(trianglesFound));
 //                break;
             case 0:
-                int trianglesFound = 0;
                 for(Edge<IntWritable, NullWritable> e : vertex.getEdges()){
                     if(vertex.getId().compareTo(e.getTargetVertexId()) < 0) { //we have a smaller index
-                        trianglesFound++;
+                        sendMessage(e.getTargetVertexId(), vertex.getId());
                     }
+                }
+                break;
+            case 1:
+                int trianglesFound = 0;
+                for(IntWritable sourceId : messages){
+                    trianglesFound++;
                 }
                 vertex.setValue(new IntWritable(trianglesFound));
                 break;
