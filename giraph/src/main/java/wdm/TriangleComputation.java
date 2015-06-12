@@ -55,9 +55,9 @@ public class TriangleComputation extends BasicComputation<IntWritable, IntWritab
             case 1:
                 int trianglesFound = 0;
                 for(IntWritable sourceId : messages) {
-                    if(vertex.getId().get() != sourceId.get()) { //Verify received message is not from self
+//                    if(vertex.getId().get() != sourceId.get()) { //Verify received message is not from self
                         trianglesFound += sourceId.get();
-                    }
+//                    }
                 }
                 vertex.setValue(new IntWritable(trianglesFound));
                 break;
