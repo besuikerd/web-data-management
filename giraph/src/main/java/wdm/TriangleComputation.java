@@ -50,6 +50,7 @@ public class TriangleComputation extends BasicComputation<IntWritable, IntWritab
                         sendMessage(e.getTargetVertexId(), vertex.getId());
                     }
                 }
+                vertex.setValue(new IntWritable(0));
                 break;
             case 1:
                 int trianglesFound = 0;
