@@ -53,11 +53,22 @@ public class TriangleComputation extends BasicComputation<IntWritable, IntWritab
                 vertex.setValue(new IntWritable(0));
                 break;
             case 1:
-                int trianglesFound = 0;
                 for(IntWritable sourceId : messages) {
-//                    if(vertex.getId().get() != sourceId.get()) { //Verify received message is not from self
-                        trianglesFound += sourceId.get();
-//                    }
+                    for(Edge<IntWritable, NullWritable> e : vertex.getEdges()){
+                        if(vertex.getId().get() < e.getTargetVertexId().get()) { //we have a smaller index
+                            sendMessage(e.getTargetVertexId(), sourceId);
+                        }
+                    }
+                }
+                break;
+            case 2:
+                int trianglesFound = 0;
+                for(IntWritable sourceId : messages){
+                    for(Edge<IntWritable, NullWritable> e : vertex.getEdges()){
+                        if(e.getTargetVertexId().get() == sourceId.get()){
+                            trianglesFound++;
+                        }
+                    }
                 }
                 vertex.setValue(new IntWritable(trianglesFound));
                 break;
