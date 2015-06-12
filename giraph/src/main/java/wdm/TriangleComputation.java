@@ -16,37 +16,9 @@ public class TriangleComputation extends BasicComputation<IntWritable, IntWritab
     @Override
     public void compute(Vertex<IntWritable, IntWritable, NullWritable> vertex, Iterable<IntWritable> messages) throws IOException {
         switch((int) getSuperstep()){
-//            case 0:
-//                for(Edge<IntWritable, NullWritable> e : vertex.getEdges()){
-//                    if(vertex.getId().compareTo(e.getTargetVertexId()) < 0){ //we have a smaller index
-//                        sendMessage(e.getTargetVertexId(), vertex.getId());
-//                    }
-//                }
-//                break;
-//            case 1:
-//                for(IntWritable sourceId : messages){
-//                    for(Edge<IntWritable, NullWritable> e : vertex.getEdges()){
-//                        if(vertex.getId().compareTo(e.getTargetVertexId()) < 0){
-//                            sendMessage(e.getTargetVertexId(), sourceId);
-//                        }
-//                    }
-//                }
-//                break;
-//            case 2:
-//                int trianglesFound = 0;
-//                for(IntWritable sourceId : messages){
-//                    for(Edge<IntWritable, NullWritable> e : vertex.getEdges()){
-//                        if(e.getTargetVertexId().compareTo(sourceId) == 0){
-//                            trianglesFound++;
-//                        }
-//                    }
-//                }
-//                log.debug("triangles found: " + trianglesFound);
-//                vertex.setValue(new IntWritable(trianglesFound));
-//                break;
             case 0:
                 for(Edge<IntWritable, NullWritable> e : vertex.getEdges()){
-                    if(vertex.getId().get() < e.getTargetVertexId().get()) { //we have a smaller index
+                    if(vertex.getId().get() < e.getTargetVertexId().get()) {
                         sendMessage(e.getTargetVertexId(), vertex.getId());
                     }
                 }
@@ -55,7 +27,7 @@ public class TriangleComputation extends BasicComputation<IntWritable, IntWritab
             case 1:
                 for(IntWritable sourceId : messages) {
                     for(Edge<IntWritable, NullWritable> e : vertex.getEdges()){
-                        if(vertex.getId().get() < e.getTargetVertexId().get()) { //we have a smaller index
+                        if(vertex.getId().get() < e.getTargetVertexId().get()) {
                             sendMessage(e.getTargetVertexId(), sourceId);
                         }
                     }
