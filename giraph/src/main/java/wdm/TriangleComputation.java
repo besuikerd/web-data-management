@@ -53,8 +53,8 @@ public class TriangleComputation extends BasicComputation<IntWritable, IntWritab
                 break;
             case 1:
                 int trianglesFound = 0;
-                for(IntWritable sourceId : messages){
-                    trianglesFound++;
+                for(IntWritable sourceId : messages) {
+                    trianglesFound += sourceId.get();
                 }
                 vertex.setValue(new IntWritable(trianglesFound));
                 break;
