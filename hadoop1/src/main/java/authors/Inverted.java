@@ -22,8 +22,6 @@ import java.util.Scanner;
  */
 public class Inverted {
 
-    private static final float D = 3; //TODO set these from job based on input args
-
     public static class InvertedMapper1 extends Mapper<LongWritable, Text, Text, IntWritable> {
 
         @Override
@@ -113,6 +111,7 @@ public class Inverted {
         @Override
         protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             List<String> vs = new ArrayList<String>();
+            int D = context.getConfiguration().getInt("D", 1);
             int d = 0;
             for(Text val : values){
                 d++;

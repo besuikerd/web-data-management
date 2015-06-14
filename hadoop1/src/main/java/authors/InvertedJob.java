@@ -25,6 +25,7 @@ public class InvertedJob {
 	 * $HADOOP_HOME/conf directory must be in the CLASSPATH
 	 */
         Configuration conf = new Configuration();
+        conf.setInt("D", args.length - 1);
 
 	/* We expect two arguments */
 
