@@ -120,8 +120,8 @@ public class Inverted {
 
             for(String val : vs) {
                 String[] va = val.split("\t");
-                float tf = Float.parseFloat(va[1]) / Float.parseFloat(va[2]);
-                float idf = d / D;
+                double tf = Double.parseDouble(va[1]) / Double.parseDouble(va[2]);
+                double idf = Math.log10(D / d);
                 context.write(new Text(key.toString() + '\t' + va[0]), new Text(String.format("%.2f\t%.2f", tf, idf)));
             }
         }
