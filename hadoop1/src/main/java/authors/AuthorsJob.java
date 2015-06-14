@@ -6,6 +6,7 @@ package authors;
  * produce each author with her publication count.
  */
 
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -15,6 +16,8 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import authors.Authors;
+
+import java.io.File;
 
 /**
  * The follozing class implements the Job submission, based on
@@ -30,11 +33,15 @@ public class AuthorsJob {
 	 */
         Configuration conf = new Configuration();
 
-	/* We expect two arguments */
-
         if (args.length != 2) {
             System.err.println("Usage: AuthorsJob <in> <out>");
             System.exit(2);
+        }
+        String outputDir = args[args.length - 1];
+
+        File f = new File(outputDir);
+        if (f.exists()) {
+            FileUtils.forceDelete(f);
         }
 
 	/* Allright, define and submit the job */

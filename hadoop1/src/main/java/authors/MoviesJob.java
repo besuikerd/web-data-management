@@ -50,7 +50,6 @@ public class MoviesJob {
 
 	/* Define the Mapper and the Reducer */
         job.setMapperClass(Movies.MoviesMapper.class);
-        job.setReducerClass(Movies.MoviesReducer.class);
 
 	/* Define the output type */
         job.setOutputKeyClass(Text.class);

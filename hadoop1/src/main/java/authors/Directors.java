@@ -48,13 +48,4 @@ public class Directors {
             }
         }
     }
-
-    public static class DirectorsReducer extends Reducer<Text, Text, Text, Text>{
-        @Override
-        protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            for(Text t : values) {
-                context.write(key, t);
-            }
-        }
-    }
 }

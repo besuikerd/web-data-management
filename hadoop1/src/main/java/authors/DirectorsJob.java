@@ -43,7 +43,6 @@ public class DirectorsJob {
 
 	/* Define the Mapper and the Reducer */
         job.setMapperClass(Directors.DirectorsMapper.class);
-        job.setReducerClass(Directors.DirectorsReducer.class);
 
 	/* Define the output type */
         job.setOutputKeyClass(Text.class);

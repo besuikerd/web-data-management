@@ -53,6 +53,8 @@ public class Authors {
             for (IntWritable val : values) {
                 count += val.get();
             }
+            System.out.println("Combining: " + key + " count: " + count);
+
             result.set(count);
             context.write(key, result);
         }
