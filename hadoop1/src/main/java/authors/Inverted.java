@@ -121,7 +121,7 @@ public class Inverted {
             for(String val : vs) {
                 String[] va = val.split("\t");
                 double tf = Double.parseDouble(va[1]) / Double.parseDouble(va[2]);
-                double idf = Math.log10(D / d);
+                double idf = Math.log10(((double)D) / ((double)d));
                 context.write(new Text(key.toString() + '\t' + va[0]), new Text(String.format("%.2f\t%.2f", tf, idf)));
             }
         }
