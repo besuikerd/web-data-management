@@ -94,19 +94,17 @@ public class MultiwayCycle {
             String C = splits[2];
             int cHash = Math.abs(C.hashCode() % b);
 
-            int result = 0;
             if(A.equals("$")) {
-                result =  val * b * b + bHash * b + cHash;
+                aHash = val;
             }
             else if(B.equals("$")) {
-                result = aHash * b * b + val * b + cHash;
+                bHash = val;
             }
             else if(C.equals("$")) {
-                result = aHash * b * b + bHash * b + val;
+                cHash = val;
             }
-            else {
-                System.out.println("ERRORORORORORORORORORORRO");
-            }
+
+            int result = aHash * b * b + bHash * b + cHash;
             System.out.println(value + " partition: " + result);
             return result;
         }
