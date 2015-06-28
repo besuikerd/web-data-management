@@ -60,6 +60,27 @@ public abstract class CTPTest {
         }
     }
 
+    protected void outputMatches(String queryName, TPEStack root, String file){
+        String line = "========";
+
+        System.out.println(line +  " Query: " + line + "\n");
+
+        System.out.println(queryName + "\n");
+
+        System.out.println(line + " Result: " + line + "\n");
+
+        List<Match> result = match(root, file);
+        for(Match m : result){
+            for(List<Match> tuple: m.getTuples()) {
+                System.out.println(tuple);
+                for(Match m2 : tuple){
+
+                    System.out.println(m2.getXml() == null ? "\nnull\n" : m2.getXml().toXMLString());
+                }
+            }
+        }
+    }
+
     protected void assertTrue(boolean condition){
         if(!condition){
             fail("true != " + condition);

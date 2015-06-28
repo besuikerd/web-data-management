@@ -2,6 +2,7 @@ package test;
 
 import wdm.matcher.MatcherAny;
 import wdm.tpe.TPEStack;
+import wdm.tpe.TPEStackAttribute;
 import wdm.tpe.TPEStackBranch;
 import wdm.tpe.TPEStackRoot;
 import wdm.match.Match;
@@ -61,7 +62,7 @@ public class PredicateTest extends CTPTest{
     /**
      * for $p in //person[//first]
      *                   [//last]
-     * where $p/email=’m@home’
+     * where $p/email=m@home
      * return ($p//first, $p//last)
      */
     TPEBuilder q4 = TPEBuilder.builder("person")
@@ -71,7 +72,7 @@ public class PredicateTest extends CTPTest{
 
     /**
      * for $p in //person
-     * where $p/email=’m@home’
+     * where $p/email=m@home
      * return <res>{$p/&#42;/last}</res>
      *
      */
@@ -80,6 +81,22 @@ public class PredicateTest extends CTPTest{
     .in(new MatcherAny(), any -> any
                     .select("last")
     );
+
+
+    /**
+     * for $p in //person
+     * where $p/email[domain] = "com"
+     * return ($p//first, $p//email)
+     */
+    TPEStack q6(){
+        TPEStack root = new TPEStackRoot("person");
+        TPEStack name = new TPEStackBranch(root, "name");
+        TPEStack first = new TPEStackBranch(name, "first", true);
+        TPEStack email = new TPEStackBranch(root, "email", true);
+        TPEStack domain = new TPEStackAttribute(email, new MatcherPredicate("domain", (label, text) -> text.equals("com")));
+        return root;
+    }
+
 
     @Override
     public void runTests() {
@@ -91,11 +108,25 @@ public class PredicateTest extends CTPTest{
 
     public void testBookExamples(){
         String bookFile = "book_persons.xml";
-        assertNMatches("q1", q1.build(), bookFile, 3);
-        assertNMatches("q2", q2.build(), bookFile, 4);
-        assertNMatches("q3", q3.build(), bookFile, 6);
-        assertNMatches("q4", q4.build(), bookFile, 1);
-        assertNMatches("q5", q5.build(), bookFile, 1);
+
+
+        String q1 = "for $p in //person[email] [name/last] \n\treturn ($p//email, $p/name/last)";
+        outputMatches(q1, this.q1.build(), bookFile);
+
+        String q2 = "for $p in //person[name/last]\n\treturn ($p//email, $p/name/last)";
+        outputMatches(q2, this.q2.build(), bookFile);
+
+        String q3 = "for $p in //person[email]\n\treturn $p//name/*";
+        outputMatches(q3, this.q3.build(), bookFile);
+
+        String q4 = "for $p in //person[//first] [//last]\n\t where $p/email=m@home\n\treturn ($p//first, $p//last)";
+        outputMatches(q4, this.q4.build(), bookFile);
+
+        String q5 = "for $p in //person\n\twhere $p/email=m@home\n\treturn <res>{$p/&#42;/last}</res>";
+        outputMatches(q5, this.q5.build(), bookFile);
+
+        String q6 = "for $p in //person\n\twhere $p/email[domain] = \"com\"\n\treturn ($p//first, $p//email)";
+        outputMatches(q6, this.q6(), bookFile);
     }
 
     public void testPeopleWithLastNamePredicate(){

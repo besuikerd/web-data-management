@@ -16,7 +16,7 @@ import java.util.Stack;
 
 public class StackEval extends DefaultHandler {
     private TPEStack rootStack;
-    int currentPre
+    int currentPre;
     Stack<XMLNode> preOfOpenNodes;
     List<Match> result;
 
