@@ -15,8 +15,8 @@
     </person>
 
     <person>
-        <email>a@home</email>
-        <email>a@work</email>
+        <email domain="com">a@home</email>
+        <email domain="net">a@work</email>
         <name>
             <first>Al</first>
             <last>Hart</last>

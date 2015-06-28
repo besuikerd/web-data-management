@@ -18,7 +18,10 @@ public class TPEStackBranch extends TPEStack {
     }
 
     public TPEStackBranch(TPEStack parent, String label){
-        this(parent, new MatcherString(label));
+        this(parent, label, false);
+    }
+    public TPEStackBranch(TPEStack parent, String label, boolean selected){
+        this(parent, new MatcherString(label), selected);
     }
 
     @Override

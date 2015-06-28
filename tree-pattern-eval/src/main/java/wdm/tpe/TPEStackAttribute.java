@@ -8,8 +8,8 @@ import wdm.matcher.Matcher;
  */
 public class TPEStackAttribute extends TPEStack {
 
-    public TPEStackAttribute(TPEStack parent, Matcher matcher, boolean selected){
-        super(parent, matcher, selected);
+    public TPEStackAttribute(TPEStack parent, Matcher matcher){
+        super(parent, matcher, false);
     }
 
     @Override
