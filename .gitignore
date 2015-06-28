@@ -6,3 +6,5 @@ hadoop1/target/
 hadoop1/datasets/out
 *.log
 target/
+.gradle/
+build/
