@@ -1,0 +1,3 @@
+#!/bin/bash
+cd tree-pattern-eval
+gradle -PmainClass=test.PredicateTest execute | less

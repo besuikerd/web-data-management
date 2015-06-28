@@ -1,0 +1,13 @@
+#!/bin/bash
+cd giraph
+
+hdfs dfs -rm /input/$1
+hdfs dfs -copyFromLocal assets/triangles /input
+
+echo "input is: "
+hdfs dfs -cat /input/$1
+hdfs dfs -rm -r /output/triangles
+
+hadoop jar /usr/local/giraph/giraph-examples/target/giraph-examples-1.2.0-SNAPSHOT-for-hadoop-2.5.1-jar-with-dependencies.jar org.apache.giraph.GiraphRunner wdm.TriangleComputation -vif org.apache.giraph.io.formats.IntIntNullTextInputFormat -vip /input/triangles.txt -vof org.apache.giraph.io.formats.IdWithValueTextOutputFormat -op /output/triangles -w 1 -ca giraph.SplitMasterWorker=false
+
+hdfs dfs -cat /output/triangles/part-m-00000 | less

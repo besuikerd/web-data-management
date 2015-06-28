@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+  echo "usage: [abstract1 | abstract2 | abstract3]"
+else
+  cd invertedfs
+  rm datasets/out/part-r-00000
+  java -cp target/dependency/*:target/classes/ wdm.InvertedJob datasets/$1 datasets/out
+  if [ -e "datasets/out/part-r-00000" ]; then
+    echo "file exists!"
+    less datasets/out/part-r-00000
+  fi
+fi 
+
+

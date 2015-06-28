@@ -1,0 +1,2 @@
+#!/bin/bash
+java -cp target/dependency/*:target/classes/ wdm.MultiwayCycleJob datasets/cycle-1.txt datasets/out

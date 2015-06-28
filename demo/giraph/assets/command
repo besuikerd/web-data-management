@@ -1,0 +1,10 @@
+hadoop jar /usr/local/giraph/giraph-examples/target/giraph-examples-1.2.0-SNAPSHOT-for-hadoop-2.5.1-jar-with-dependencies.jar org.apache.giraph.GiraphRunner org.apache.giraph.examples.SimpleShortestPathsComputation -vif org.apache.giraph.io.formats.JsonLongDoubleFloatDoubleVertexInputFormat -vip /input/tiny_graph.txt -vof org.apache.giraph.io.formats.IdWithValueTextOutputFormat -op /output/shortestpaths -w 1 -ca giraph.SplitMasterWorker=false
+
+
+hadoop jar /usr/local/giraph/giraph-examples/target/giraph-examples-1.2.0-SNAPSHOT-for-hadoop-2.5.1-jar-with-dependencies.jar org.apache.giraph.GiraphRunner wdm.TriangleComputation -vif org.apache.giraph.io.formats.IntIntNullTextInputFormat -vip /input/triangles.txt -vof org.apache.giraph.io.formats.IdWithValueTextOutputFormat -op /output/triangles -w 1 -ca giraph.SplitMasterWorker=false
+
+hadoop jar /home/ubuntu/projects/java/web-data-management/giraph/target/wdm-1.0-SNAPSHOT-jar-with-dependencies.jar org.apache.giraph.GiraphRunner wdm.TriangleComputation -vif org.apache.giraph.io.formats.IntIntNullTextInputFormat -vip /input/triangles.txt -vof org.apache.giraph.io.formats.IdWithValueTextOutputFormat -op /output/triangles -w 1 -ca giraph.SplitMasterWorker=false
+
+cd ~/Documents && ./
+
+git pull && mvn compile && cd target/classes/ && jar uf /usr/local/giraph/giraph-examples/target/giraph-examples-1.2.0-SNAPSHOT-for-hadoop-2.5.1-jar-with-dependencies.jar wdm/ && cd ../.. && hdfs dfs -rm -r /output/triangles && hadoop jar /usr/local/giraph/giraph-examples/target/giraph-examples-1.2.0-SNAPSHOT-for-hadoop-2.5.1-jar-with-dependencies.jar org.apache.giraph.GiraphRunner wdm.TriangleComputation -vif org.apache.giraph.io.formats.IntIntNullTextInputFormat -vip /input/triangles.txt -vof org.apache.giraph.io.formats.IdWithValueTextOutputFormat -op /output/triangles -w 1 -ca giraph.SplitMasterWorker=false && hdfs dfs -cat /output/triangles/part-m-00000
